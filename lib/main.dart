@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:sebsabi/form_provider.dart';
-import 'package:sebsabi/signup.dart';
+import 'package:sebsabi/landing.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Color(0XFF909300)),
           useMaterial3: true,
         ),
-        home: SignUp(),
+        home: Landing(),
       ),
     );
   }

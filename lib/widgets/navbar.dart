@@ -7,14 +7,20 @@ import '../form_provider.dart';
 
 
 class NavBar extends StatefulWidget {
+
   const NavBar({super.key});
+
 
   @override
   State<NavBar> createState() => _NavBarState();
+
+
+
 }
 
 class _NavBarState extends State<NavBar> {
-
+  FontWeight button = FontWeight.bold;
+  FontWeight button1 = FontWeight.normal;
   @override
   Widget build(BuildContext context) {
 
@@ -36,8 +42,11 @@ class _NavBarState extends State<NavBar> {
         child:Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children:[
-              Icon(Icons.menu),
-              Text("hello")
+              Text("Sebsabi", style: GoogleFonts.poppins(textStyle: TextStyle(
+                color: Color(0XFF909300),
+                fontSize: 30,
+              ))),
+
 
             ]
         )
@@ -56,23 +65,37 @@ class _NavBarState extends State<NavBar> {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:[
-                  Text("ሰብሳቢ", style: GoogleFonts.notoSerifEthiopic(textStyle: TextStyle(
+                  Text("Sebsabi", style: GoogleFonts.poppins(textStyle: TextStyle(
                     color: Color(0XFF909300),
                     fontSize: 30,
+                    fontWeight: FontWeight.w500
                   ))),
 
                   Row(
                     children: [
                       TextButton(onPressed: (){
                         Provider.of<MyModel>(context, listen: false).updateMessage("login");
+                        setState(() {
+                           // Change the color to red (or any other color you want)
+                          button1 = FontWeight.bold;
+                          button= FontWeight.normal;// Change the font weight when clicked
+                        });
                       }, child: Text("LogIn", style: GoogleFonts.poppins(textStyle: TextStyle(
                         color: Color(0XFF909300),
-
-                      )))),
+                        fontWeight: button1
+                      ))),
+                      ),
                       TextButton(onPressed: (){
                         Provider.of<MyModel>(context, listen: false).updateMessage("signup");
+                        setState(() {
+                          // Change the color to red (or any other color you want)
+                          button= FontWeight.bold;
+                          button1 = FontWeight.normal; // Change the font weight when clicked
+                        });
+
                       }, child: Text("SignUp", style: GoogleFonts.poppins(textStyle: TextStyle(
                         color: Color(0XFF909300),
+                          fontWeight: button
                       ))))
                     ],
                   )
