@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
@@ -19,11 +18,11 @@ class FrontUI extends StatelessWidget {
 
         CircleAvatar(
           radius: w/12,
-          backgroundImage:AssetImage("logo.png"),
+          backgroundImage:const AssetImage("logo.png"),
           backgroundColor: Colors.white,
         ),
         Text("Sebsabi", style: GoogleFonts.poppins(textStyle: TextStyle(
-          color: Color(0XFF909300),
+          color: const Color(0XFF909300),
           fontSize: w/16,
         ))),
 

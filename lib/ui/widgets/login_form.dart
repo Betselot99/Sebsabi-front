@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
@@ -83,23 +82,23 @@ class _LogInFormState extends State<LogInForm> {
       children:[
       FittedBox(
       fit: BoxFit.scaleDown,
-      child: Text("Log in to Sebsabi", style: GoogleFonts.poppins(textStyle: TextStyle(
+      child: Text("Log in to Sebsabi", style: GoogleFonts.poppins(textStyle: const TextStyle(
         color: Color(0XFF909300),
         fontSize: 20,
       ))),
     ),
-        SizedBox(height: 20,),
+        const SizedBox(height: 20,),
     Container(
 
     decoration:  BoxDecoration(
-    color: Color(0XFF909300).withOpacity(0.1),
-    borderRadius: BorderRadius.all(Radius.circular(20)),),
+    color: const Color(0XFF909300).withOpacity(0.1),
+    borderRadius: const BorderRadius.all(Radius.circular(20)),),
       child: Form(
     key: _formKey,
     child: Column(
     //crossAxisAlignment: CrossAxisAlignment.end,
     children: [
-      SizedBox(height: 20,),
+      const SizedBox(height: 20,),
       Padding(
         padding: const EdgeInsets.only(left: 20, right:20),
         child: TextFormField(
@@ -126,7 +125,7 @@ class _LogInFormState extends State<LogInForm> {
           onChanged: _validateEmail,
         ),
       ),
-      SizedBox(height: 20,),
+      const SizedBox(height: 20,),
       Padding(
         padding: const EdgeInsets.only(left: 20, right:20),
         child: TextFormField(
@@ -157,12 +156,12 @@ class _LogInFormState extends State<LogInForm> {
           onChanged: _validatePassword,
         ),
       ),
-      SizedBox(height: 16),
+      const SizedBox(height: 16),
       ElevatedButton(
         onPressed: _submitForm,
-        child: Text('Log In'),
+        child: const Text('Log In'),
       ),
-      SizedBox(height: 20,),
+      const SizedBox(height: 20,),
 
     ]))
     )

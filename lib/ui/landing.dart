@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
-import 'package:sebsabi/form_provider.dart';
-import 'package:sebsabi/widgets/frontui.dart';
-import 'package:sebsabi/widgets/login_form.dart';
-import 'package:sebsabi/widgets/navbar.dart';
+import 'package:sebsabi/provider/form_provider.dart';
+import 'package:sebsabi/ui/widgets/frontui.dart';
+import 'package:sebsabi/ui/widgets/login_form.dart';
+import 'package:sebsabi/ui/widgets/navbar.dart';
 import 'package:provider/provider.dart';
-import 'package:sebsabi/widgets/signup_form.dart';
+import 'package:sebsabi/ui/widgets/signup_form.dart';
 
 
 class Landing extends StatefulWidget {
@@ -29,7 +29,7 @@ class _LandingState extends State<Landing> {
     return Scaffold(
       body: Column(
         children: [
-          NavBar(),
+          const NavBar(),
           Expanded(
             child: ListView(
               children: [Center(
@@ -39,10 +39,10 @@ class _LandingState extends State<Landing> {
                   //crossAxisAlignment: CrossAxisAlignment.center,
 
                   children: [
-                    Container(
+                    SizedBox(
                         width: w*2,
-                        height: h/2,child: FrontUI()),
-                    Container(
+                        height: h/2,child: const FrontUI()),
+                    SizedBox(
                       width: w*2,
                       height: h*2.5,
                       child: Padding(
@@ -51,9 +51,9 @@ class _LandingState extends State<Landing> {
                           builder:(context,myModel, child){
                             String status = myModel.message;
                             if(status=="login"){
-                              return LogInForm();
+                              return const LogInForm();
                             }else{
-                              return SignUpForm();
+                              return const SignUpForm();
                             }
 
                           }
@@ -75,23 +75,23 @@ class _LandingState extends State<Landing> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          NavBar(),
+          const NavBar(),
           Expanded(
             child: ListView(
                 children: [Center(
                   child: Row(
 
                     children: [
-                      Container(
+                      SizedBox(
                         width: w/2,
                           height:h,
 
 
-                          child: Padding(
-                            padding: const EdgeInsets.only(top: 200),
+                          child: const Padding(
+                            padding: EdgeInsets.only(top: 200),
                             child: FrontUI(),
                           )),
-                      Container(
+                      SizedBox(
                         width: w/2,
                         height:h,
                         child: Padding(
@@ -100,9 +100,9 @@ class _LandingState extends State<Landing> {
                               builder:(context,myModel, child){
                                 String status = myModel.message;
                                 if(status=="login"){
-                                  return LogInForm();
+                                  return const LogInForm();
                                 }else{
-                                  return SignUpForm();
+                                  return const SignUpForm();
                                 }
 
                               }

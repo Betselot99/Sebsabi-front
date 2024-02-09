@@ -3,7 +3,7 @@ import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import '../form_provider.dart';
+import '../../provider/form_provider.dart';
 
 
 class NavBar extends StatefulWidget {
@@ -37,12 +37,12 @@ class _NavBarState extends State<NavBar> {
   Widget MobileNavBar(){
 
     return Container(
-        margin: EdgeInsets.symmetric(horizontal: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 20),
         height:70,
         child:Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children:[
-              Text("Sebsabi", style: GoogleFonts.poppins(textStyle: TextStyle(
+              Text("Sebsabi", style: GoogleFonts.poppins(textStyle: const TextStyle(
                 color: Color(0XFF909300),
                 fontSize: 30,
               ))),
@@ -55,7 +55,7 @@ class _NavBarState extends State<NavBar> {
   Widget DesktopNavBar(){
     return Material(
       elevation: 20,
-      child: Container(
+      child: SizedBox(
 
           //margin: EdgeInsets.symmetric(horizontal: 20, vertical:10),
           height:70,
@@ -65,7 +65,7 @@ class _NavBarState extends State<NavBar> {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children:[
-                  Text("Sebsabi", style: GoogleFonts.poppins(textStyle: TextStyle(
+                  Text("Sebsabi", style: GoogleFonts.poppins(textStyle: const TextStyle(
                     color: Color(0XFF909300),
                     fontSize: 30,
                     fontWeight: FontWeight.w500
@@ -81,7 +81,7 @@ class _NavBarState extends State<NavBar> {
                           button= FontWeight.normal;// Change the font weight when clicked
                         });
                       }, child: Text("LogIn", style: GoogleFonts.poppins(textStyle: TextStyle(
-                        color: Color(0XFF909300),
+                        color: const Color(0XFF909300),
                         fontWeight: button1
                       ))),
                       ),
@@ -94,7 +94,7 @@ class _NavBarState extends State<NavBar> {
                         });
 
                       }, child: Text("SignUp", style: GoogleFonts.poppins(textStyle: TextStyle(
-                        color: Color(0XFF909300),
+                        color: const Color(0XFF909300),
                           fontWeight: button
                       ))))
                     ],

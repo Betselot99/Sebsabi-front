@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sebsabi/ui/home.dart';
 
 
 class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
+
 
   @override
   State<SignUpForm> createState() => _SignUpFormState();
@@ -189,7 +191,7 @@ class _SignUpFormState extends State<SignUpForm> {
       children:[
         FittedBox(
           fit: BoxFit.scaleDown,
-          child: Text("Join Sebsabi as a Client", style: GoogleFonts.poppins(textStyle: TextStyle(
+          child: Text("Join Sebsabi as a Client", style: GoogleFonts.poppins(textStyle: const TextStyle(
             color: Color(0XFF909300),
             fontSize: 20,
           ))),
@@ -197,22 +199,22 @@ class _SignUpFormState extends State<SignUpForm> {
         Container(
 
             decoration:  BoxDecoration(
-              color: Color(0XFF909300).withOpacity(0.1),
-              borderRadius: BorderRadius.all(Radius.circular(20)),),
+              color: const Color(0XFF909300).withOpacity(0.1),
+              borderRadius: const BorderRadius.all(Radius.circular(20)),),
 
             child: Form(
               key: _formKey,
               child: Column(
                 //crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   FittedBox(
                     fit:BoxFit.scaleDown,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
 
-                        Text("Here From a Company?",style: GoogleFonts.poppins(textStyle: TextStyle(
+                        Text("Here From a Company?",style: GoogleFonts.poppins(textStyle: const TextStyle(
                           color: Colors.black,
                           fontSize: 14,
                         ))),
@@ -225,7 +227,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.only(left: 20, right:20),
                     child: TextFormField(
@@ -254,7 +256,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   ),
 
                   //last Name
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.only(left: 20, right:20),
                     child: TextFormField(
@@ -282,7 +284,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                   ),
                   //Email
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.only(left: 20, right:20),
                     child: TextFormField(
@@ -310,7 +312,7 @@ class _SignUpFormState extends State<SignUpForm> {
                     ),
                   ),
                   //password
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.only(left: 20, right:20),
                     child: TextFormField(
@@ -343,7 +345,7 @@ class _SignUpFormState extends State<SignUpForm> {
                   ),
 
                   // confirm password
-                  SizedBox(height: 20,),
+                  const SizedBox(height: 20,),
                   Padding(
                     padding: const EdgeInsets.only(left: 20, right:20),
                     child: TextFormField(
@@ -379,7 +381,7 @@ class _SignUpFormState extends State<SignUpForm> {
 
                   if(ifCompany)...[
                     //company name
-                    SizedBox(height: 20,),
+                    const SizedBox(height: 20,),
                     Padding(
                       padding: const EdgeInsets.only(left: 20, right:20),
                       child: TextFormField(
@@ -407,7 +409,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       ),
                     ),
                     //company Type
-                    SizedBox(height: 20,),
+                    const SizedBox(height: 20,),
                     Padding(
                       padding: const EdgeInsets.only(left: 20, right:20),
                       child: TextFormField(
@@ -435,7 +437,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       ),
                     ),
                     //Ocupation
-                    SizedBox(height: 20,),
+                    const SizedBox(height: 20,),
                     Padding(
                       padding: const EdgeInsets.only(left: 20, right:20),
                       child: TextFormField(
@@ -463,11 +465,12 @@ class _SignUpFormState extends State<SignUpForm> {
                       ),
                     ),
                   ],
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: _submitForm,
-                    child: Text('Sign UP'),
-                  )
+                    onPressed: (){_submitForm;  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const Home()));},
+                    child: const Text('Sign Up'),
+                  ),
+                  const SizedBox(height: 16)
                 ],
               ),
             )

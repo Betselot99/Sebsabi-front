@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_builder/responsive_builder.dart';
-import 'package:sebsabi/form_provider.dart';
-import 'package:sebsabi/landing.dart';
+import 'package:sebsabi/provider/form_provider.dart';
+import 'package:sebsabi/ui/home.dart';
+import 'package:sebsabi/ui/landing.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -19,12 +19,13 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MyModel()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'ሰብሳቢ',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Color(0XFF909300)),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0XFF909300)),
           useMaterial3: true,
         ),
-        home: Landing(),
+        home: const Home(),
       ),
     );
   }
