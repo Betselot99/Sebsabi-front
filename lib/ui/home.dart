@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sebsabi/ui/completedforms.dart';
 import 'package:sebsabi/ui/myforms.dart';
+import 'package:sebsabi/ui/postedforms.dart';
 import 'package:sebsabi/ui/profile.dart';
 import 'package:side_navigation/side_navigation.dart';
 import 'package:responsive_builder/responsive_builder.dart';
@@ -15,17 +17,38 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  List<Widget> views = const [
-    Center(
+  List<Widget> views =  [
+    Padding(
+      padding: const EdgeInsets.only(top: 50, left: 100),
       child: MyForms(),
     ),
-    Center(
-      child: Text('posted Forms'),
+    Padding(
+      padding: const EdgeInsets.only(top: 50, left: 100),
+      child: PostedForms(),
     ),
-    Center(
-      child: Text('completed forms'),
+    Padding(
+      padding: const EdgeInsets.only(top: 50, left: 100),
+      child: CompletedForms(),
     ),
-    Center(
+    const Center(
+      child: Profile(),
+    ),
+  ];
+
+  List<Widget> pages =  [
+    Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: MyForms(),
+    ),
+    Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: PostedForms(),
+    ),
+    Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: CompletedForms(),
+    ),
+    const Center(
       child: Profile(),
     ),
   ];
@@ -36,6 +59,7 @@ class _HomeState extends State<Home> {
       selectedIndex = index;
     });
   }
+
 
 
 
@@ -60,23 +84,23 @@ class _HomeState extends State<Home> {
     return Stack(
       children: [
         IconButton(
-          icon: Icon(Icons.notifications, color: Color(0XFF909300),size: 30,),
+          icon: const Icon(Icons.notifications, color: Color(0XFF909300),size: 30,),
           onPressed: (){},
         ),
         Positioned(
           right: 0,
           top: 0,
           child: Container(
-            padding: EdgeInsets.all(2),
+            padding: const EdgeInsets.all(2),
             decoration: BoxDecoration(
               color: Colors.red,
               borderRadius: BorderRadius.circular(8),
             ),
-            constraints: BoxConstraints(
+            constraints: const BoxConstraints(
               minWidth: 16,
               minHeight: 16,
             ),
-            child: Text(
+            child: const Text(
               '2',
               style: TextStyle(
                 color: Colors.white,
@@ -91,9 +115,23 @@ class _HomeState extends State<Home> {
   }
 
   Widget MobileHome(context,w,h){
+    String textToShow;
+
+    if (selectedIndex == 0) {
+      textToShow = "My Forms";
+    } else if (selectedIndex==1) {
+      textToShow = "Posted Forms";
+    } else if (selectedIndex==2) {
+      textToShow = "Completed Forms";
+    } else if (selectedIndex==3){
+      textToShow = "Profile";
+    }else{
+      textToShow = "Sebsabi";
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("Sebsabi", style: GoogleFonts.poppins(textStyle: TextStyle(
+        title: Text(textToShow, style: GoogleFonts.poppins(textStyle: const TextStyle(
           color:  Color(0XFF909300),
           fontSize: 30,
         ))),
@@ -104,9 +142,9 @@ class _HomeState extends State<Home> {
           padding: EdgeInsets.zero,
           children: [
             UserAccountsDrawerHeader(
-              accountName: Text('John Doe'),
-              accountEmail: Text('john.doe@example.com'),
-              currentAccountPicture: CircleAvatar(
+              accountName: const Text('John Doe'),
+              accountEmail: const Text('john.doe@example.com'),
+              currentAccountPicture: const CircleAvatar(
                 child: Icon(
                   Icons.person,
                   size: 40.0,
@@ -120,21 +158,21 @@ class _HomeState extends State<Home> {
               },
             ),
             ListTile(
-              title: Text('My Forms'),
+              title: const Text('My Forms'),
               onTap: () {
                 _selectPage(0);
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
-              title: Text('Posted Forms'),
+              title: const Text('Posted Forms'),
               onTap: () {
                 _selectPage(1);
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
-              title: Text('Completed Forms'),
+              title: const Text('Completed Forms'),
               onTap: () {
                 _selectPage(2);
                 Navigator.pop(context); // Close the drawer
@@ -144,7 +182,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
-      body: views[selectedIndex],
+      body: pages[selectedIndex],
 
     );
   }
@@ -152,6 +190,7 @@ class _HomeState extends State<Home> {
 
     Widget DesktopHome(context,w,h){
     return Scaffold(
+      backgroundColor: const Color(0XFFFAFBFF),
       body: Stack(
         children: [
           Positioned(
@@ -161,18 +200,22 @@ class _HomeState extends State<Home> {
           Row(
             children: [
               SideNavigationBar(
-                toggler: SideBarToggler(
+                toggler: const SideBarToggler(
                 ),
                 theme: SideNavigationBarTheme(
-                  togglerTheme: SideNavigationBarTogglerTheme(
+                  backgroundColor: const Color(0XFFFFFFFF),
+                  togglerTheme: const SideNavigationBarTogglerTheme(
                     expandIconColor: Color(0XFF909300),
                     shrinkIconColor: Color(0XFF909300)
                   ),
                   itemTheme: SideNavigationBarItemTheme(
-                    selectedItemColor: Color(0XFF909300),
+                    selectedItemColor: const Color(0XFF909300),
                     labelTextStyle: GoogleFonts.poppins()
                   ),
-                  dividerTheme:SideNavigationBarDividerTheme.standard()
+                  dividerTheme:const SideNavigationBarDividerTheme(
+                    mainDividerThickness: 2, showHeaderDivider: true, showMainDivider: true, showFooterDivider: true,mainDividerColor:Color(0XFFEAEAEA)
+
+                  )
 
 
                 ),
@@ -181,7 +224,7 @@ class _HomeState extends State<Home> {
                       backgroundImage: AssetImage("logo.png"),
                       backgroundColor: Colors.white,
                     ),
-                    title: Text("Sebsabi", style: GoogleFonts.poppins(textStyle: TextStyle(
+                    title: Text("Sebsabi", style: GoogleFonts.poppins(textStyle: const TextStyle(
                       color:  Color(0XFF909300),
                       fontSize: 30,
                     ))),
@@ -215,7 +258,7 @@ class _HomeState extends State<Home> {
                 },
               ),
               Expanded(
-                child: true?views.elementAt(selectedIndex):const Text("profile"),
+                child: views.elementAt(selectedIndex),
               )
             ],
           ),

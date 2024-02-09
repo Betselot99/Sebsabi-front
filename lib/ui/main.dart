@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sebsabi/provider/form_provider.dart';
 import 'package:sebsabi/ui/home.dart';
-import 'package:sebsabi/ui/landing.dart';
 import 'package:provider/provider.dart';
 
 void main() {
