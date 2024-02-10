@@ -3,6 +3,7 @@ import 'package:sebsabi/ui/completedforms.dart';
 import 'package:sebsabi/ui/myforms.dart';
 import 'package:sebsabi/ui/postedforms.dart';
 import 'package:sebsabi/ui/profile.dart';
+import 'package:sebsabi/ui/widgets/notification.dart';
 import 'package:side_navigation/side_navigation.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -80,39 +81,7 @@ class _HomeState extends State<Home> {
   }
 
 
-  Widget Notification(){
-    return Stack(
-      children: [
-        IconButton(
-          icon: const Icon(Icons.notifications, color: Color(0XFF909300),size: 30,),
-          onPressed: (){},
-        ),
-        Positioned(
-          right: 0,
-          top: 0,
-          child: Container(
-            padding: const EdgeInsets.all(2),
-            decoration: BoxDecoration(
-              color: Colors.red,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            constraints: const BoxConstraints(
-              minWidth: 16,
-              minHeight: 16,
-            ),
-            child: const Text(
-              '2',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 10,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+
 
   Widget MobileHome(context,w,h){
     String textToShow;
@@ -135,7 +104,7 @@ class _HomeState extends State<Home> {
           color:  Color(0XFF909300),
           fontSize: 30,
         ))),
-        actions: [ Notification(),]
+        actions: [ MyNotification(),]
       ),
       drawer: Drawer(
         child: ListView(
@@ -196,7 +165,7 @@ class _HomeState extends State<Home> {
           Positioned(
             right: 50,
             top: 20,
-            child: Notification()),
+            child: MyNotification()),
           Row(
             children: [
               SideNavigationBar(

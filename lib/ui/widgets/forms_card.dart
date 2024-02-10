@@ -34,7 +34,7 @@ class _FormsCardState extends State<FormsCard> {
           elevation: 5.0,
           child: SizedBox(
             width:200,
-            height: 250,
+            height: 260,
             child: Padding(
               padding: const EdgeInsets.all(30.0),
               child: Column(

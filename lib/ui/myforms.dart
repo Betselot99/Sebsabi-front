@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sebsabi/ui/createform.dart';
 import 'package:sebsabi/ui/widgets/forms_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,7 +37,12 @@ class _MyFormsState extends State<MyForms> {
           const SizedBox(height: 20),],
         Wrap(
           children: [
-            const FormsCard(formStatus: "New",),
+             FormsCard(formStatus: "New",onTap: (){Navigator.push(
+               context,
+               MaterialPageRoute(
+                 builder: (context) => CreateForm(),
+               ),
+             );},),
             const SizedBox(width: 20),
             if(widget.formAvailable == true)
               Wrap(
