@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sebsabi/provider/form_provider.dart';
 import 'package:sebsabi/ui/home.dart';
 import 'package:provider/provider.dart';
+import 'package:sebsabi/ui/landing.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0XFF909300)),
           useMaterial3: true,
         ),
-        home: const Home(),
+        home: const Landing(),
       ),
     );
   }

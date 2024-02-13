@@ -78,8 +78,20 @@ class _CreateFormState extends State<CreateForm> {
                         ),
                       ),
                       buttonRow(),
-                      Text('Title: $title'),
-                      Text('Description: $description'),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: (){},
+                            child: const Text('Save as draft'),
+                          ),
+                          SizedBox(width:20),
+                          ElevatedButton(
+                            onPressed: (){},
+                            child: const Text('Post as Job'),
+                          ),
+                        ],
+                      )
 
                     ],
                   ),
