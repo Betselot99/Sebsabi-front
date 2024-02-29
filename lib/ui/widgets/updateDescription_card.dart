@@ -58,69 +58,79 @@ class _UpdateDescriptionCardState extends State<UpdateDescriptionCard> {
         .size
         .width;
     return Card(
-        child:Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 20,),
-              TextFormField(
-                controller: titleController,
-                textAlignVertical: TextAlignVertical.bottom,
-                minLines: 3, // Set this
-                maxLines: 6, // and this
-                keyboardType: TextInputType.multiline,
-                style: const TextStyle(color: Colors.black),
-                decoration:  InputDecoration(
-                  fillColor:  Colors.white,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                    const BorderSide(width: 1, color: Colors.white), //<-- SEE HERE
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  hintText: 'Title',
-                  errorText: _titleError,
-                  focusedBorder:OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white, width: 1.0),
-                    borderRadius: BorderRadius.circular(25.0),
-                  ),
-                ),
-                validator: (value) => _titleError,
-                onChanged: (value) {
-                  _validateTitle(value);
-                  widget.onDataChanged(titleController.text, descriptionController.text, _descriptionError,_titleError);
-                },
+        child:ClipPath(
+          child: Container(
+            padding: EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(color: Color(0XFF909300), width: 10),
               ),
-              const SizedBox(height: 20,),
-              TextFormField(
-                controller: descriptionController,
-                textAlignVertical: TextAlignVertical.bottom,
-                minLines: 3, // Set this
-                maxLines: 6, // and this
-                keyboardType: TextInputType.multiline,
-                style: const TextStyle(color: Colors.black),
-                decoration:  InputDecoration(
-                  fillColor:  Colors.white,
-                  filled: true,
-                  enabledBorder: OutlineInputBorder(
-                    borderSide:
-                    const BorderSide(width: 1, color: Colors.white), //<-- SEE HERE
-                    borderRadius: BorderRadius.circular(10.0),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20,),
+                  TextFormField(
+                    controller: titleController,
+                    textAlignVertical: TextAlignVertical.bottom,
+                    minLines: 3, // Set this
+                    maxLines: 6, // and this
+                    keyboardType: TextInputType.multiline,
+                    style: const TextStyle(color: Colors.black),
+                    decoration:  InputDecoration(
+                      fillColor:  Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                        const BorderSide(width: 1, color: Colors.white), //<-- SEE HERE
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      hintText: 'Title',
+                      errorText: _titleError,
+                      focusedBorder:OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white, width: 1.0),
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
+                    ),
+                    validator: (value) => _titleError,
+                    onChanged: (value) {
+                      _validateTitle(value);
+                      widget.onDataChanged(titleController.text, descriptionController.text, _descriptionError,_titleError);
+                    },
                   ),
-                  hintText: 'Description',
-                  errorText: _descriptionError,
-                  focusedBorder:OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.white, width: 1.0),
-                    borderRadius: BorderRadius.circular(25.0),
+                  const SizedBox(height: 20,),
+                  TextFormField(
+                    controller: descriptionController,
+                    textAlignVertical: TextAlignVertical.bottom,
+                    minLines: 3, // Set this
+                    maxLines: 6, // and this
+                    keyboardType: TextInputType.multiline,
+                    style: const TextStyle(color: Colors.black),
+                    decoration:  InputDecoration(
+                      fillColor:  Colors.white,
+                      filled: true,
+                      enabledBorder: OutlineInputBorder(
+                        borderSide:
+                        const BorderSide(width: 1, color: Colors.white), //<-- SEE HERE
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      hintText: 'Description',
+                      errorText: _descriptionError,
+                      focusedBorder:OutlineInputBorder(
+                        borderSide: const BorderSide(color: Colors.white, width: 1.0),
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
+                    ),
+                    validator: (value) => _descriptionError,
+                    onChanged: (value) {
+                      _validateDescription(value);
+                      widget.onDataChanged(titleController.text, descriptionController.text, _descriptionError,_titleError);
+                    },
                   ),
-                ),
-                validator: (value) => _descriptionError,
-                onChanged: (value) {
-                  _validateDescription(value);
-                  widget.onDataChanged(titleController.text, descriptionController.text, _descriptionError,_titleError);
-                },
+                ],
               ),
-            ],
+            ),
           ),
         )
     );

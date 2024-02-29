@@ -79,7 +79,7 @@ double i=0;
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               border: Border(
-                left: BorderSide(color: Color(0XFF909300), width: 10),
+                left: BorderSide(color: Color(0XFF909300).withOpacity(0.5), width: 10),
               ),
             ),
             child: Padding(

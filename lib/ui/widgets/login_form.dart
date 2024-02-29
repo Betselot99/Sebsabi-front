@@ -4,7 +4,7 @@ import 'package:sebsabi/api/Client_Api.dart';
 import 'package:sebsabi/ui/home.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'dart:html' as html;
-
+import 'package:page_transition/page_transition.dart';
 
 class LogInForm extends StatefulWidget {
   const LogInForm({super.key});
@@ -194,10 +194,7 @@ class _LogInFormState extends State<LogInForm> {
       ),
       const SizedBox(height: 16),
       ElevatedButton(
-        onPressed:(){ Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Home()),
-        );}, //_submitForm,
+        onPressed:(){ Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child: Home()));}, //_submitForm,
         child: const Text('Log In'),
       ),
       const SizedBox(height: 20,),

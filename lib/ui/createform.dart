@@ -208,6 +208,7 @@ class _CreateFormState extends State<CreateForm> {
                             },
                             child: const Text('Post as Job'),
                           ),
+                          SizedBox(height:50)
                         ],
                       )
 

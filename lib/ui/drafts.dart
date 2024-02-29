@@ -235,6 +235,7 @@ class _DraftsState extends State<Drafts> {
                           },
                           child: const Text('Post as Job'),
                         ),
+                        SizedBox(height:50)
                       ],
                     )
 
