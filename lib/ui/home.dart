@@ -9,6 +9,7 @@ import 'package:side_navigation/side_navigation.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:html' as html;
+import 'package:page_transition/page_transition.dart';
 
 
 class Home extends StatefulWidget {
@@ -34,7 +35,10 @@ class _HomeState extends State<Home> {
       child: CompletedForms(),
     ),
     const Center(
-      child: Profile(),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 50, left: 100),
+        child: Profile(),
+      ),
     ),
   ];
 
@@ -168,6 +172,7 @@ class _HomeState extends State<Home> {
           ],
         ),
       ),
+
       body: pages[selectedIndex],
 
     );
@@ -177,6 +182,38 @@ class _HomeState extends State<Home> {
     Widget DesktopHome(context,w,h){
     return Scaffold(
       backgroundColor: const Color(0XFFFAFBFF),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Custom Drawer Header',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text('Option 1'),
+              onTap: () {
+                // Handle option 1
+              },
+            ),
+            ListTile(
+              title: Text('Option 2'),
+              onTap: () {
+                // Handle option 2
+              },
+            ),
+            // Add more list items as needed
+          ],
+        ),
+      ),
       body: Stack(
         children: [
           Positioned(
@@ -186,10 +223,7 @@ class _HomeState extends State<Home> {
               children: [
                 TextButton(onPressed: (){
                   html.window.localStorage.remove('auth_token');
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const Landing()),
-                  );
+                  Navigator.push(context, PageTransition(type: PageTransitionType.leftToRight, child: Landing()));
                 }, child: Text("Log Out", style: GoogleFonts.poppins(textStyle: const TextStyle(
                     color: Color(0XFF909300),
 
