@@ -33,5 +33,5 @@ update-manifest:
             sed -i "s#image:.*#image: ${DOCKER_IMAGE}#g" ./frontend/frontend-deployment.yaml
         - git stage ./frontend/frontend-deployment.yaml
         - git commit -m "Update the frontend image tag [skip-ci]"
-        - git push origin HEAD:$CI_COMMIT_REF_NAME
+        - git push origin main:$CI_COMMIT_REF_NAME
 
