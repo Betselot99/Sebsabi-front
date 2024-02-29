@@ -209,7 +209,7 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
                   ),
                   SizedBox(height:50),
                   Padding(
-                    padding: const EdgeInsets.only(right:200, left:200),
+                    padding:  EdgeInsets.only(right:w/6, left:w/6),
                     child: Container(
                       height:300,
                       child: GridView.builder(
@@ -224,6 +224,7 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
                         itemBuilder: (context, index) {
                           if(index==0){
                           return Container(
+
                             decoration:
                             const BoxDecoration(border: Border(
 
@@ -352,7 +353,7 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
                   ),
                   SizedBox(height:50),
                   Padding(
-                    padding: const EdgeInsets.only(left:650, right:650),
+                    padding:  EdgeInsets.only(left:w/2.3, right:w/2.3),
                     child: Container(
                       height:60,
                       decoration: BoxDecoration(

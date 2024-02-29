@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0XFF909300)),
           useMaterial3: true,
         ),
-        home: storedToken != null && !hasExpired ? Home() : Home(),
+        home: storedToken != null && !hasExpired ? Home() : Landing(),
       ),
     );
   }

@@ -5,6 +5,7 @@ import 'package:sebsabi/ui/myforms.dart';
 import 'package:sebsabi/ui/postedforms.dart';
 import 'package:sebsabi/ui/profile.dart';
 import 'package:sebsabi/ui/widgets/notification.dart';
+import 'package:sebsabi/ui/widgets/notification_drawer.dart';
 import 'package:side_navigation/side_navigation.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -182,38 +183,9 @@ class _HomeState extends State<Home> {
     Widget DesktopHome(context,w,h){
     return Scaffold(
       backgroundColor: const Color(0XFFFAFBFF),
-      endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Custom Drawer Header',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
-              ),
-            ),
-            ListTile(
-              title: Text('Option 1'),
-              onTap: () {
-                // Handle option 1
-              },
-            ),
-            ListTile(
-              title: Text('Option 2'),
-              onTap: () {
-                // Handle option 2
-              },
-            ),
-            // Add more list items as needed
-          ],
-        ),
-      ),
+      endDrawer: NotificationDrawer(),
+      drawerScrimColor: Colors.transparent,
+      endDrawerEnableOpenDragGesture: false,
       body: Stack(
         children: [
           Positioned(
