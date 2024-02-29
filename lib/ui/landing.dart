@@ -213,6 +213,7 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
                     child: Container(
                       height:300,
                       child: GridView.builder(
+                        shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
 
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -233,15 +234,17 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
                             ),
 
                             ),
-                            child: Column(
+                            child: ListView(
 
                               children: [
                                 Icon(Icons.track_changes_outlined,size: 100,color: Color(0XFF909300),), // Replace with your desired icon
                                 SizedBox(height: 8.0), // Adjust the space between icon and text
-                                Text('Mission',style: GoogleFonts.poppins(textStyle: const TextStyle(
-                                  color: Color(0XFF909300),
-                                  fontSize: 23,
-                                ))),
+                                Center(
+                                  child: Text('Mission',style: GoogleFonts.poppins(textStyle: const TextStyle(
+                                    color: Color(0XFF909300),
+                                    fontSize: 23,
+                                  ))),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.only(right:20),
                                   child: Text(textAlign: TextAlign.justify,'  We are dedicated to providing a seamless platform for clients to effortlessly conduct surveys and gather valuable insights while connecting with a network of skilled data collection professionals.',style: GoogleFonts.poppins(textStyle: const TextStyle(
@@ -262,15 +265,17 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
                               ),
 
                               ),
-                              child: Column(
+                              child: ListView(
 
                                 children: [
                                   Icon(Icons.visibility_outlined,size: 100,color: Color(0XFF909300),), // Replace with your desired icon
                                   SizedBox(height: 8.0), // Adjust the space between icon and text
-                                  Text('Vision',style: GoogleFonts.poppins(textStyle: const TextStyle(
-                                    color: Color(0XFF909300),
-                                    fontSize: 23,
-                                  ))),
+                                  Center(
+                                    child: Text('Vision',style: GoogleFonts.poppins(textStyle: const TextStyle(
+                                      color: Color(0XFF909300),
+                                      fontSize: 23,
+                                    ))),
+                                  ),
                                   Padding(
                                     padding: const EdgeInsets.only(left:20,right:20),
                                     child: Text(textAlign: TextAlign.justify,'  We aim to bridge the gap between clients seeking accurate information and skilled data collectors capable of delivering high-quality results.',style: GoogleFonts.poppins(textStyle: const TextStyle(
@@ -283,15 +288,17 @@ class _LandingState extends State<Landing> with SingleTickerProviderStateMixin {
                             );
                           }else if(index==2){
                            return Container(
-                              child: Column(
+                              child: ListView(
 
                                 children: [
                                 Icon(Icons.diamond_outlined,size: 100,color: Color(0XFF909300),), // Replace with your desired icon
                              SizedBox(height: 8.0), // Adjust the space between icon and text
-                             Text('Value',style: GoogleFonts.poppins(textStyle: const TextStyle(
-                               color: Color(0XFF909300),
-                               fontSize: 23,
-                             ))),
+                             Center(
+                               child: Text('Value',style: GoogleFonts.poppins(textStyle: const TextStyle(
+                                 color: Color(0XFF909300),
+                                 fontSize: 23,
+                               ))),
+                             ),
                              Padding(
                                padding: const EdgeInsets.only(left:10),
                                child: Text(textAlign: TextAlign.justify,'  Whether you${"'"}re conducting market research, academic surveys, or any other data collection endeavor, our platform accommodates various survey types to meet your specific needs.',style: GoogleFonts.poppins(textStyle: const TextStyle(

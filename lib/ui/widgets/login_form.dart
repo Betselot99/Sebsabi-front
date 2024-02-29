@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sebsabi/api/Client_Api.dart';
+import 'package:sebsabi/ui/admin/admin_home.dart';
 import 'package:sebsabi/ui/home.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'dart:html' as html;
@@ -194,7 +195,7 @@ class _LogInFormState extends State<LogInForm> {
       ),
       const SizedBox(height: 16),
       ElevatedButton(
-        onPressed:(){ Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child: Home()));}, //_submitForm,
+        onPressed:(){ Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child: AdminHome()));}, //_submitForm,
         child: const Text('Log In'),
       ),
       const SizedBox(height: 20,),
