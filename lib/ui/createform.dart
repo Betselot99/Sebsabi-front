@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:sebsabi/ui/completedforms.dart';
-import 'package:sebsabi/ui/myforms.dart';
-import 'package:sebsabi/ui/postedforms.dart';
-import 'package:sebsabi/ui/profile.dart';
+import 'package:sebsabi/api/Form_Api.dart';
+import 'package:sebsabi/model/Status.dart';
 import 'package:sebsabi/ui/widgets/description_card.dart';
 import 'package:sebsabi/ui/widgets/pagesnavbar.dart';
 import 'package:sebsabi/ui/widgets/question_card.dart';
-import 'package:side_navigation/side_navigation.dart';
-import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CreateForm extends StatefulWidget {
@@ -18,8 +14,8 @@ class CreateForm extends StatefulWidget {
 }
 
 class _CreateFormState extends State<CreateForm> {
-  final List<Widget> _widgetArray = [];
-  int _questionCount=0;
+
+  int _questionCount=1;
   Widget buttonRow() => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -28,23 +24,34 @@ class _CreateFormState extends State<CreateForm> {
         visible: _questionCount > 0,
         child: IconButton(
           onPressed: () {
-            if (_widgetArray.isNotEmpty) {
-              _widgetArray.removeAt(_widgetArray.length - 1);
-            }
+
             setState(() {
+              dataList.removeLast();
               _questionCount--;
             });
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.remove_circle,
           ),
         ),
       ),
       IconButton(
         onPressed: () {
-          setState(() => _questionCount++);
+          setState(() {
+            if(question.isNotEmpty){
+              _questionError= null;
+            _questionCount++;
+            question='';
+            }else{
+              _questionError="please fill out this field";
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Please fill out Question'),));
+            }
+
+
+            });
         },
-        icon: Icon(
+        icon: const Icon(
           Icons.add_circle,
         ),
       ),
@@ -52,6 +59,28 @@ class _CreateFormState extends State<CreateForm> {
   );
   String title = '';
   String description ='';
+  String? _descriptionError;
+  String? _titleError;
+  String? _questionError;
+  String question='' ;
+  String type= '';
+  final List<Map<String, String>> dataList = [];
+
+// Add an item to the dataList
+  void addItemToDataList(String question, String type, int index) {
+    Map<String, String> newItem = {
+      'question': question,
+      'type': type,
+    };
+    if(dataList.length==index){
+    //dataList.removeAt(index);
+    dataList.insert(index, newItem);
+    }else{
+      dataList.removeAt(index);
+      dataList.insert(index, newItem);
+    }
+
+  }
   @override
   Widget build(BuildContext context) {
     var w = MediaQuery.of(context).size.width;
@@ -59,35 +88,124 @@ class _CreateFormState extends State<CreateForm> {
     return  Scaffold(
         body: Column(
             children:[
-              PagesNavBar(),
+              const PagesNavBar(),
               Expanded(
                 child: Padding(
                   padding:  EdgeInsets.fromLTRB(w/6, 20, w/6, 20),
                   child: ListView(
                     children: [
-                      DescriptionCard(onDataChanged: (title, description) {
+                      Text("Create Form", style: GoogleFonts.poppins(textStyle: const TextStyle(
+                        color: Color(0XFF909300),
+                        fontSize: 30,
+                        fontWeight: FontWeight.w500,
+                      ))),
+                      DescriptionCard(onDataChanged: (title, description,_descriptionError,_titleError) {
                         setState(() {
                           this.title = title;
                           this.description = description;
+                          this._descriptionError=_descriptionError;
+                          this._titleError=_titleError;
                         });
                       },),
                       Column(
                         children: List.generate(
                           _questionCount, // Adjust the number of items as needed
-                              (index) => QuestionCard(questionNumber: index+1),
+                              (index) => QuestionCard(questionNumber: index+1,onDataChange: ( question,  type,) {
+                                setState((){
+                                  print(index);
+                                  this.question=question;
+                                  this.type=type;
+                                  addItemToDataList(question, type, index);
+                               },);
+
+                              },questionError: _questionError,),
                         ),
                       ),
                       buttonRow(),
+                      Text("title: ${title.isNotEmpty}"),
+                      Text("description: ${description.isNotEmpty}"),
+                      Text("title error: ${_titleError==null}"),
+                      Text("description error: $_descriptionError"),
+
+                      Text("${dataList.indexed}"),
+
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           ElevatedButton(
-                            onPressed: (){},
+                            onPressed: ()async{
+                              if(title.isNotEmpty && description.isNotEmpty && _titleError == null && _descriptionError == null && question.isNotEmpty ){
+                                try{
+
+                                  int? formId= await FormApi.createForm(title, description, 10,Status.Draft);
+                                  print(formId);
+                                  try {
+                                    for (Map<String, String> questionData in dataList) {
+                                      final questionText = questionData['question'];
+                                      final questionType = questionData['type'];
+                                      await FormApi.addQuestionToForm(formId, questionText, questionType);
+
+                                    }
+                                  } catch (e) {
+                                    // Handle the exception, show an error message, etc.
+                                    print('Error: $e');
+                                  }
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Form saved as draft'),));
+
+                                }catch(e){
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem please try agian'),));
+                                }
+                              }else{
+                                if(question.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text(
+                                          'Please fill out Questions'),));
+                                }else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text(
+                                          'Please fill out Description and Title '),));
+                                }
+                              }
+                            },
                             child: const Text('Save as draft'),
                           ),
-                          SizedBox(width:20),
+                          const SizedBox(width:20),
                           ElevatedButton(
-                            onPressed: (){},
+                            onPressed: ()async{
+                              if(title.isNotEmpty && description.isNotEmpty && _titleError == null && _descriptionError == null && question.isNotEmpty ){
+                              try{
+
+                                int? formId= await FormApi.createForm(title, description, 10,Status.Posted);
+                                print(formId);
+                                try {
+                                  for (Map<String, String> questionData in dataList) {
+                                    final questionText = questionData['question'];
+                                    final questionType = questionData['type'];
+                                    await FormApi.addQuestionToForm(formId, questionText, questionType);
+
+                                  }
+                                } catch (e) {
+                                  // Handle the exception, show an error message, etc.
+                                  print('Error: $e');
+                                }
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Form has been created'),));
+
+                              }catch(e){
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem please try agian'),));
+                              }
+                              }else{
+                                if(question.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text(
+                                          'Please fill out Questions'),));
+                                }else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text(
+                                          'Please fill out Description and Title '),));
+                                }
+    }
+                            },
                             child: const Text('Post as Job'),
                           ),
                         ],

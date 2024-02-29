@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sebsabi/api/Client_Api.dart';
+import 'package:sebsabi/ui/home.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import 'dart:html' as html;
 
 
 class LogInForm extends StatefulWidget {
@@ -60,16 +64,40 @@ class _LogInFormState extends State<LogInForm> {
       _obscureText = !_obscureText;
     });
   }
-  void _submitForm() {
+  void _submitForm() async{
     if (_formKey.currentState!.validate()) {
 
       if (
             emailController.text.isEmpty ||
             passwordController.text.isEmpty) {
-          print('please fill out all forms');
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('please fill in all fields'),));
         }
       else{
-        print('email: ${emailController.text}');
+        try{
+          final token = await ClientApi.loginClient(emailController.text, passwordController.text);
+          Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+          bool hasExpired = JwtDecoder.isExpired(token);
+          if (decodedToken.containsKey('sub') && !hasExpired) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('client is logged in'),));
+            Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+            print(decodedToken['sub']);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const Home()),
+            );
+          } else {
+            // Token is invalid, handle accordingly (e.g., show an error)
+            html.window.localStorage.remove('auth_token');
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('wrong password and email'),));
+            print(token);
+          }
+
+        }catch(e){
+          html.window.localStorage.remove('auth_token');
+          print('Error: $e');
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('wrong password and email'),));
+        }
       }
     }
   }
@@ -156,9 +184,20 @@ class _LogInFormState extends State<LogInForm> {
           onChanged: _validatePassword,
         ),
       ),
+      TextButton(
+        onPressed: null,
+        child:  Text("Forgot password?", style: GoogleFonts.poppins(textStyle: const TextStyle(
+            color: Color(0XFF909300),
+            fontSize: 14,
+            fontWeight: FontWeight.w500
+        ))),
+      ),
       const SizedBox(height: 16),
       ElevatedButton(
-        onPressed: _submitForm,
+        onPressed:(){ Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Home()),
+        );}, //_submitForm,
         child: const Text('Log In'),
       ),
       const SizedBox(height: 20,),

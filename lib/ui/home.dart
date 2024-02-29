@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sebsabi/ui/completedforms.dart';
+import 'package:sebsabi/ui/landing.dart';
 import 'package:sebsabi/ui/myforms.dart';
 import 'package:sebsabi/ui/postedforms.dart';
 import 'package:sebsabi/ui/profile.dart';
@@ -7,6 +8,7 @@ import 'package:sebsabi/ui/widgets/notification.dart';
 import 'package:side_navigation/side_navigation.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:html' as html;
 
 
 class Home extends StatefulWidget {
@@ -104,7 +106,22 @@ class _HomeState extends State<Home> {
           color:  Color(0XFF909300),
           fontSize: 30,
         ))),
-        actions: [ MyNotification(),]
+        actions: [ TextButton(onPressed: (){
+          html.window.localStorage.remove('auth_token');
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const Landing()),
+          );
+        }, child: Text("Log Out", style: GoogleFonts.poppins(textStyle: const TextStyle(
+          color: Color(0XFF909300),
+
+        ))),
+        ),
+          const SizedBox(width:20),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MyNotification(),
+          ),]
       ),
       drawer: Drawer(
         child: ListView(
@@ -165,7 +182,22 @@ class _HomeState extends State<Home> {
           Positioned(
             right: 50,
             top: 20,
-            child: MyNotification()),
+            child: Row(
+              children: [
+                TextButton(onPressed: (){
+                  html.window.localStorage.remove('auth_token');
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Landing()),
+                  );
+                }, child: Text("Log Out", style: GoogleFonts.poppins(textStyle: const TextStyle(
+                    color: Color(0XFF909300),
+
+                ))),
+                ),
+                MyNotification(),
+              ],
+            )),
           Row(
             children: [
               SideNavigationBar(

@@ -42,6 +42,9 @@ dev_dependencies:
   responsive_builder: ^0.7.0
   google_fonts: ^6.1.0
   side_navigation: ^1.0.4
+  jwt_decoder: ^2.0.1
+  flutter_rating_bar: ^4.0.1
+  font_awesome_flutter: ^10.7.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -63,7 +66,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-  - assets/
+  - assets/logo.png
+  - assets/deviceone.png
+  - assets/devicetwo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

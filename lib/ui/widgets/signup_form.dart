@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sebsabi/model/Client.dart';
+import 'package:sebsabi/provider/Client_provider.dart';
 import 'package:sebsabi/ui/home.dart';
+import 'package:provider/provider.dart';
+
+import '../../api/Client_Api.dart';
+import '../../model/Status.dart';
 
 
 class SignUpForm extends StatefulWidget {
@@ -13,6 +19,7 @@ class SignUpForm extends StatefulWidget {
 
 class _SignUpFormState extends State<SignUpForm> {
   bool ifCompany = false;
+  bool isLoading = false;
 
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
@@ -147,10 +154,11 @@ class _SignUpFormState extends State<SignUpForm> {
   }
 
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
       // Form is valid, proceed with your logic here
       // For this example, we will simply print the email
+
         if(ifCompany) {
           if (fnameController.text.isEmpty ||
               lnameController.text.isEmpty ||
@@ -160,18 +168,67 @@ class _SignUpFormState extends State<SignUpForm> {
               companyTypeController.text.isEmpty ||
               companyNameController.text.isEmpty ||
               occupationController.text.isEmpty) {
-            print('please fill out all forms');
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('please fill out all fields'),));
           } else {
-            print('First Name: ${fnameController.text}');
+            setState(() {
+              isLoading = true; // Set loading state to true
+            });
+            var clientClass= Provider.of<ClientProvider>(context, listen: false);
+
+            var register =  await clientClass.RegisterUser(fnameController.text, lnameController.text, emailController.text, passwordController.text, companyNameController.text, companyTypeController.text, occupationController.text,Status.Active);
+            setState(() {
+              isLoading = false; // Set loading state to false after signup process is complete
+            });
+            if(register==1){
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Client has been registered'),));
+
+              fnameController.clear();
+                  lnameController.clear();
+                  emailController.clear();
+                  passwordController.clear();
+                  confirmPasswordController.clear();
+                  companyTypeController.clear();
+                  companyNameController.clear();
+                  occupationController.clear();
+                  ifCompany = !ifCompany;
+
+            }else if(register==2){
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('We are having difficulty connecting.Please try again '),));
+            }else{
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem. Please try again'),));
+            }
           }
         }else if(fnameController.text.isEmpty ||
               lnameController.text.isEmpty ||
               emailController.text.isEmpty ||
               passwordController.text.isEmpty ||
-              confirmPasswordController.text.isEmpty){print('please fill out all forms');}
+              confirmPasswordController.text.isEmpty){
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('please fill out all fields'),));}
         else{
-        print('First Name: ${fnameController.text}');
+          setState(() {
+            isLoading = true; // Set loading state to true
+          });
+          var clientClass= Provider.of<ClientProvider>(context, listen: false);
+          var register = await clientClass.RegisterUser(fnameController.text, lnameController.text, emailController.text, passwordController.text, null, null, null, Status.Active);
+
+          setState(() {
+            isLoading = false; // Set loading state to false after signup process is complete
+          });
+          print("$register");
+          if(register==1){
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Client has been registered'),));
+
+            fnameController.clear();
+            lnameController.clear();
+            emailController.clear();
+            passwordController.clear();
+            confirmPasswordController.clear();
+          }else{
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem. Please try again'),));
+          }
       }
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Please fill out all forms'),));
     }
   }
 
@@ -189,13 +246,10 @@ class _SignUpFormState extends State<SignUpForm> {
       //crossAxisAlignment: CrossAxisAlignment.end,
 
       children:[
-        FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Text("Join Sebsabi as a Client", style: GoogleFonts.poppins(textStyle: const TextStyle(
-            color: Color(0XFF909300),
-            fontSize: 20,
-          ))),
-        ),
+        Text("Join Sebsabi as a Client", style: GoogleFonts.poppins(textStyle: const TextStyle(
+          color: Color(0XFF909300),
+          fontSize: 20,
+        ))),
         Container(
 
             decoration:  BoxDecoration(
@@ -467,8 +521,17 @@ class _SignUpFormState extends State<SignUpForm> {
                   ],
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: (){_submitForm;  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>const Home()));},
-                    child: const Text('Sign Up'),
+                    onPressed: (){
+
+                        _submitForm();
+
+                      print("wasa");},
+                    child: isLoading
+                        ? const CircularProgressIndicator(
+                      strokeWidth: 2,  // Adjust the thickness of the indicator
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ) // Show loading indicator if _isLoading is true
+                        : const Text('Sign up'),
                   ),
                   const SizedBox(height: 16)
                 ],

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:sebsabi/ui/home.dart';
 import 'package:sebsabi/ui/widgets/notification.dart';
 
@@ -51,10 +50,10 @@ class _PagesNavBarState extends State<PagesNavBar> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Home(),
+                        builder: (context) => const Home(),
                       ),
                     );
-                  }, icon: Icon(Icons.home)
+                  }, icon: const Icon(Icons.home)
                   ),
                   MyNotification()
                 ],
@@ -90,11 +89,11 @@ class _PagesNavBarState extends State<PagesNavBar> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Home(),
+                            builder: (context) => const Home(),
                           ),
                         );
-                      }, child: Text("Home", style: GoogleFonts.poppins(textStyle: TextStyle(
-                          color: const Color(0XFF909300),
+                      }, child: Text("Home", style: GoogleFonts.poppins(textStyle: const TextStyle(
+                          color: Color(0XFF909300),
                       ))),
                       ),
                       MyNotification()

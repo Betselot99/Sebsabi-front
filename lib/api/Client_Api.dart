@@ -1,41 +1,50 @@
-import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:sebsabi/model/Client.dart';
+import 'package:sebsabi/model/ClientAuthRequest.dart';
+import 'dart:html' as html;
 
 class ClientApi{
-  static const String url = 'http://10.0.2.2:3000/api/core';
+  static const String url = 'http://localhost:8080';
 
-  // static Future<Map<String, dynamic>> loginUser(String phoneNo, String password) async {
-  //   final loginUrl = Uri.parse('$url/login');// Replace 'your_api_url_here' with your actual API endpoint
-  //   final response = await http.post(
-  //     loginUrl,
-  //     headers: {'Content-Type': 'application/json'},
-  //     body: jsonEncode({
-  //       'phoneNo': phoneNo,
-  //       'password': password,
-  //     }),
-  //   );
+  static Future<String?> loginClient(String username,String password) async {
+    final loginUrl = Uri.parse('$url/api/auth/login');// Replace 'your_api_url_here' with your actual API endpoint
+    final response = await http.post(
+      loginUrl,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode(ClientAuthRequest(username: username, password: password)),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+      // Assuming your token is in a field named 'token' in the JSON response
+      final String token = responseData['token'] as String;
+      saveTokenToLocalStorage(token);
+      return token;
+    }else{
+      throw Exception('Failed to login');
+    }
+  }
+
+  static void saveTokenToLocalStorage(String token) {
+    html.window.localStorage['auth_token'] = token;
+  }
+
+  static String? getTokenFromLocalStorage() {
+    return html.window.localStorage['auth_token'];
+  }
+
+  // static Future<bool> validateToken(String? token) async {
+  //   final validationUrl = Uri.parse('$url/auth/validate?token=$token');
+  //   final response = await http.get(validationUrl);
   //
-  //   if (response.statusCode == 200) {
-  //     // Successful login
-  //     Map<String, dynamic> data = jsonDecode(response.body);
-  //     //return {'success': true, 'data': data};
-  //
-  //     //Store user credentials locally
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     prefs.setString('accessToken', data['accessToken']);
-  //     prefs.setInt('roleId', data['message']);
-  //
-  //     return {'success': true, 'data': data};
-  //   } else {
-  //     // Login failed
-  //     Map<String, dynamic> error = jsonDecode(response.body);
-  //     return {'success': false, 'error': error['error']};
-  //   }
+  //   return response.statusCode == 200;
   // }
+
+
 
   // Future<bool> isLoggedIn() async {
   //   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -43,35 +52,19 @@ class ClientApi{
   // }
 
   static Future<int> register(Client client) async {
-    final registerUrl = Uri.parse('$url/signup/clients');
-    final response = await http.post(registerUrl, headers: {'Content-Type': 'application/json'},body: jsonEncode(client.toJson()));
-    if (response.statusCode == 201) {
-      print('Api Data saved successfully');
-      return 1;
-    }else{return 0;}
-  }
+    final registerUrl = Uri.parse('$url/api/core/client/signup');
+    final response = await http.post(registerUrl, headers: {
+      'Content-Type': 'application/json'},body: jsonEncode(client.toJson()));
 
-  static Future<String> loginClient(String username, String password) async {
-    final loginUrl = Uri.parse('$url/login');
-    final response = await http.post(
-      loginUrl,
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(<String, String>{
-        'username': username,
-        'password': password,
-      }),
-    );
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = jsonDecode(response.body);
-      return data['token'];
-    } else if (response.statusCode == 400) {
-      throw Exception('Invalid credentials');
-    } else {
-      throw Exception('Failed to login');
+    if (response.statusCode == 201) {
+      print(response.body);
+      return 1;
+    }else
+    {
+      return 0;
     }
   }
+
 }
 
   // static Future<int> checkPhone(String phoneNo) async {

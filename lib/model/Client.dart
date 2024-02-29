@@ -1,3 +1,5 @@
+import 'package:sebsabi/model/Status.dart';
+
 class Client {
   String firstName;
   String lastName;
@@ -5,8 +7,8 @@ class Client {
   String password;
   String? companyName;
   String? companyType;
-  int? occupation;
-  Status? status;
+  String? occupation;
+  Status? isActive;
 
   Client({
     required this.firstName,
@@ -16,7 +18,7 @@ class Client {
     this.companyName,
      this.companyType,
     this.occupation,
-     this.status,
+     this.isActive,
   });
 
   factory Client.fromJson(Map<String, dynamic> json) {
@@ -28,7 +30,7 @@ class Client {
       companyName: json['companyName'] ?? "",
       companyType: json['companyType'] ?? "",
       occupation: json['occupation'] ?? 0,
-      status: json['status']?? Status.Active, // Change this based on your logic
+      isActive: json['isActive'] ?? Status.Active, // Change this based on your logic
     );
   }
 
@@ -41,12 +43,9 @@ class Client {
       'companyName': companyName,
       'companyType': companyType,
       'occupation': occupation,
-      'status': status, // Change this based on your logic
+      'isActive': isActive?.toString().split('.').last, // Change this based on your logic
     };
   }
 }
 
-enum Status {
-  Active,
-  Inactive,
-}
+

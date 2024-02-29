@@ -46,7 +46,34 @@ class _NavBarState extends State<NavBar> {
                 color: Color(0XFF909300),
                 fontSize: 30,
               ))),
+              Row(
+                children: [
+                  TextButton(onPressed: (){
+                    Provider.of<MyModel>(context, listen: false).updateMessage("login");
+                    setState(() {
+                      // Change the color to red (or any other color you want)
+                      button1 = FontWeight.bold;
+                      button= FontWeight.normal;// Change the font weight when clicked
+                    });
+                  }, child: Text("LogIn", style: GoogleFonts.poppins(textStyle: TextStyle(
+                      color: const Color(0XFF909300),
+                      fontWeight: button1
+                  ))),
+                  ),
+                  TextButton(onPressed: (){
+                    Provider.of<MyModel>(context, listen: false).updateMessage("signup");
+                    setState(() {
+                      // Change the color to red (or any other color you want)
+                      button= FontWeight.bold;
+                      button1 = FontWeight.normal; // Change the font weight when clicked
+                    });
 
+                  }, child: Text("SignUp", style: GoogleFonts.poppins(textStyle: TextStyle(
+                      color: const Color(0XFF909300),
+                      fontWeight: button
+                  ))))
+                ],
+              )
 
             ]
         )
@@ -58,7 +85,7 @@ class _NavBarState extends State<NavBar> {
       child: SizedBox(
 
           //margin: EdgeInsets.symmetric(horizontal: 20, vertical:10),
-          height:70,
+          height:90,
 
           child:Padding(
             padding: const EdgeInsets.only(left:40, right: 70),
