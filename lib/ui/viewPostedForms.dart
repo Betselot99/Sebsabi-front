@@ -1,3 +1,5 @@
+
+
 import 'package:flutter/material.dart';
 import 'package:sebsabi/api/Form_Api.dart';
 import 'package:sebsabi/model/Status.dart';
@@ -15,13 +17,50 @@ class ViewPostedForms extends StatefulWidget {
   final String formTitle;
   final String formDescription;
   final int usage;
-  const ViewPostedForms({super.key, required this.formTitle, required this.formDescription, required this.usage, required this.id});
+  bool claimed;
+  final int? assignedGigWorkerId;
+  final String? assignedGigWorkername;
+   ViewPostedForms({super.key, required this.formTitle, required this.formDescription, required this.usage, required this.id, required this.claimed, required this.assignedGigWorkerId, required this.assignedGigWorkername});
 
   @override
   State<ViewPostedForms> createState() => _ViewPostedFormsState();
 }
 
 class _ViewPostedFormsState extends State<ViewPostedForms> {
+  @override
+  void initState() {
+    super.initState();
+    checkForForm();
+  }
+
+  late Future<List<Map<String, dynamic>>> forms;
+  late bool formAvailable= false;
+  late List<Map<String,dynamic>> formsList=[];
+
+  int assignedGigWorkerId=0;
+  String gigWorkerName="";
+  String gigWorkerLName="";
+
+
+  Future<void> checkForForm() async {
+    forms = FormApi.getProposalsByFormId(widget.id);
+    //print(forms);
+    formsList = await forms;
+
+    for (var form in formsList) {
+
+
+      if (formsList.isEmpty) {
+        setState(() {
+          formAvailable = false;
+        });
+      } else {
+        setState(() {
+          formAvailable = true;
+        });
+      }
+    }
+  }
   static const int numItems = 20;
   List<bool> selected = List<bool>.generate(numItems, (int index) => false);
 
@@ -88,11 +127,13 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
                             ],
                           ),
                         )),
+                    if(widget.claimed==false)...[
                     Text("Applications", style: GoogleFonts.poppins(textStyle: const TextStyle(
                       color: Color(0XFF909300),
                       fontSize: 30,
                       fontWeight: FontWeight.w500,
                     ))),
+                    if(formsList.isNotEmpty)...[
                     DataTable(
                       decoration: BoxDecoration(
                         border: Border.all(color: Color(0XFF909300), width: 2,), // Table border color
@@ -100,24 +141,39 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
                       columns: [
                         DataColumn(label: Text('First Name')),
                         DataColumn(label: Text('Last Name')),
-                        DataColumn(label: Text('Rating')),
                         DataColumn(label: Text('View Proposal')),
                         DataColumn(label: Text('View Profile')),
                         DataColumn(label: Text('Accept')),
 
                       ],
                       rows: List.generate(
-                        10, // Number of dynamic rows
+                        formsList.length, // Number of dynamic rows
                             (index) => DataRow(
                           cells: [
-                            DataCell(Text('First Name $index')),
-                            DataCell(Text('Last Name $index')),
-                            DataCell(Text('Rating $index')),
+                            DataCell(Text('${formsList[index]['gigWorker']['firstName']}')),
+                            DataCell(Text('${formsList[index]['gigWorker']['lastName']}')),
                             DataCell(
                               ElevatedButton(
                                 onPressed: () {
                                   // Handle view proposal button click
-                                  print('View Proposal $index');
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text('Proposal'),
+                                        content: Text('${formsList[index]['proposalText']}'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              // Close the dialog when the button is pressed
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Close'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 },
                                 child: Text('View Proposal'),
                               ),
@@ -141,14 +197,23 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
                                       icon: Icon(Icons.check),
                                       color: Colors.green,
                                       onPressed: () {
+                                        setState(() {
+                                          var id=formsList[index]['id'];
+                                          try{
+                                            FormApi.acceptProposal(id);
+                                            assignedGigWorkerId=formsList[index]['gigWorker']['id'];
+                                            gigWorkerLName=formsList[index]['gigWorker']['lastName'];
+                                            gigWorkerName=formsList[index]['gigWorker']['firstName'];
+                                            widget.claimed=true;
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Proposal has been accepted'),));
+                                          }catch(e){
+                                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem'),));
+                                          }
+
+                                        });
+
+
                                         print('Accept: ✓');
-                                      },
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.close),
-                                      color: Colors.red,
-                                      onPressed: () {
-                                        print('Accept: ✗');
                                       },
                                     ),
                                   ],
@@ -158,7 +223,38 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
                           ],
                         ),
                       ),
-                    ),
+                    ),]else...[
+                      Text("No Applications yet!")
+                    ]
+    ]else...[
+      SizedBox(height:50),
+      Card(
+        margin: EdgeInsets.all(16.0),
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Assigned To ${widget.assignedGigWorkername}',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 16.0),
+
+              LinearProgressIndicator(
+                value: 0.5,
+                minHeight: 10.0,
+                backgroundColor: Colors.grey[300],
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0XFF909300)),
+              ),
+            ],
+          ),
+        ),
+      )
+    ]
                   ],
                 ),
               ),

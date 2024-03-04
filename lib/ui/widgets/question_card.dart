@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class QuestionCard extends StatefulWidget {
-  final void Function(String, String) onDataChange;
+  final void Function(String, String, List<String?>, int) onDataChange;
   final int questionNumber;
   late final String? questionError;
 
@@ -16,21 +16,74 @@ class QuestionCard extends StatefulWidget {
 }
 
 class _QuestionCardState extends State<QuestionCard> {
+  final List<TextEditingController> _choiceControllers = [];
   TextEditingController questionController = TextEditingController();
   TextEditingController maxNumberController = TextEditingController();
+
   double rating = 1;
-double i=0;
+int i=0;
   String type='TEXT';
   int _multipleCount=0;
   final List<String?> _dataArray = [];    //add this
-  final String _data = '';
+
+
+
+
+
 
   Widget multipleQ(int key) => Padding(
     padding: const EdgeInsets.only(bottom: 10.0),
     child: TextFormField(
+      controller: _getControllerForKey(key),
       decoration: InputDecoration(hintText: 'Option ${key + 1}'),
+
+      onChanged: (value) {
+        print(key);
+
+        if (_choiceControllers.length <= key) {
+          _choiceControllers.add(TextEditingController(text: value));
+        } else {
+          // Get the current selection position
+          final selection = _choiceControllers[key].selection;
+
+          // Update the controller's value with the new text and selection
+          _choiceControllers[key].value = TextEditingValue(
+            text: value,
+            selection: selection,
+          );
+        }
+
+        print(_choiceControllers);
+
+        if (_dataArray.length == key) {
+          _dataArray.add(value);
+          widget.onDataChange(
+            questionController.text,
+            type,
+            _dataArray,
+            type == 'RATING_SCALE' ? 5 : 0,
+          );
+        } else {
+          _dataArray[key] = value;
+          widget.onDataChange(
+            questionController.text,
+            type,
+            _dataArray,
+            type == 'RATING_SCALE' ? 5 : 0,
+          );
+        }
+      },
     ),
   );
+
+  TextEditingController _getControllerForKey(int key) {
+    if (_choiceControllers.length <= key) {
+      return TextEditingController();
+    } else {
+      return _choiceControllers[key];
+    }
+  }
+
   Widget buttonRow() => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -39,12 +92,14 @@ double i=0;
         visible: _multipleCount > 0,
         child: IconButton(
             onPressed: () {
-              // if (_dataArray.isNotEmpty) {
-              //   _dataArray.removeAt(_dataArray.length - 1);
-              // }
+              if (_dataArray.isNotEmpty) {
+                _dataArray.removeAt(_dataArray.length - 1);
+                _choiceControllers.removeLast();
+              }
               setState(() {
                 //_data = _dataArray.toString();
                 _multipleCount--;
+
               });
             },
             icon:const Icon(
@@ -114,7 +169,7 @@ double i=0;
                           ),
 
                           onChanged: (value) {
-                            widget.onDataChange(questionController.text,type);
+                            widget.onDataChange(questionController.text,type,_dataArray,type=='RATING_SCALE'?5:0);
                           },
                         ),
                       ),
@@ -149,10 +204,10 @@ double i=0;
                               type = roleValue!;
 
                             });
-                            widget.onDataChange(questionController.text,type);
+                            widget.onDataChange(questionController.text,type,_dataArray,type=='RATING_SCALE'?5:0);
                           },
 
-                          items: <String>['TEXT','TRUE_FALSE', 'MULTIPLE_CHOICE', 'RATE']
+                          items: <String>['TEXT','TRUE_FALSE', 'MULTIPLE_CHOICE', 'RATING_SCALE']
                               .map<DropdownMenuItem<String>>((String rolevalue2) {
                             return DropdownMenuItem<String>(
                               value: rolevalue2,
@@ -168,22 +223,12 @@ double i=0;
                   if(type == 'MULTIPLE_CHOICE')...[...List.generate(_multipleCount, (index) => multipleQ(index)),
                     buttonRow(),
                     const SizedBox(height: 10),
-                    //Visibility(visible: _dataArray.isNotEmpty, child: Text(_data!)),
                     const SizedBox(height: 30),
-                  //Text("${_dataArray}")
+                    Text("$_dataArray")
+                  
                   ],
-                  if(type == 'RATE')...[
-                    const SizedBox(height:20),
-                    TextFormField(
-                      controller: maxNumberController,
-                      decoration: InputDecoration(hintText: 'Maximum rating '),
-                      onChanged: (value) {
-                        setState(() {
-                          // Parse the entered text and set the rating
-                          rating = double.tryParse(value) ?? 0;
-                        });
-                      },
-                    ),
+                  if(type == 'RATING_SCALE')...[
+
                     const SizedBox(height:20),
                     Row(
                       children: [
@@ -193,7 +238,7 @@ double i=0;
                           minRating: 1,
                           direction: Axis.horizontal,
                           allowHalfRating: true,
-                          itemCount: rating.toInt(),
+                          itemCount: 5,
                           itemSize: 20,
                           itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
                           itemBuilder: (context, _) => const Icon(
@@ -204,7 +249,7 @@ double i=0;
                           onRatingUpdate: (rating) {
                             print(rating);
                             setState(() {
-                              i=rating;
+                              i=5;
                             });
 
                           },

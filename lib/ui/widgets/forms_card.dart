@@ -6,8 +6,10 @@ class FormsCard extends StatefulWidget {
    final String formStatus;
    final String? title;
    final String? description;
+   final bool claimed;
+   final int proposalNo;
 
-  const FormsCard({super.key, this.onTap, required this.formStatus,  this.title, this.description});
+  const FormsCard({super.key, this.onTap, required this.formStatus,  this.title, this.description, required this.claimed, required this.proposalNo});
 
   @override
   State<FormsCard> createState() => _FormsCardState();
@@ -85,10 +87,17 @@ class _FormsCardState extends State<FormsCard> {
                         ))),]
                     ),
                     const SizedBox(height:10),
-                    Text("Applied People: 4",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
+                    if(widget.claimed)...[
+                      Text("Claimed",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
+                        color:  Color(0XFF909300),
+                        fontSize: 15,
+                      ))),
+
+                    ]else...[
+                    Text("Applied People: ${widget.proposalNo}",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
                       color:  Color(0XFF909300),
                       fontSize: 15,
-                    ))),
+                    ))),]
                   ]else if(widget.formStatus == "Completed")...[
                     Text("Title: ${widget.title}",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
                       color:  Colors.grey,

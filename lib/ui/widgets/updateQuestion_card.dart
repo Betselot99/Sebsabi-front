@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 class UpdateQuestionCard extends StatefulWidget {
   final String type;
   final String question;
-  final void Function(String, String) onDataChange;
+  final void Function(String, String, List<String?>, int) onDataChange;
   final int questionNumber;
   late final String? questionError;
+  final List <dynamic> choices;
 
 
 
-  UpdateQuestionCard({super.key,required this.questionNumber, required this.onDataChange, this.questionError, required this.type, required this.question, });
+  UpdateQuestionCard({super.key,required this.questionNumber, required this.onDataChange, this.questionError, required this.type, required this.question, required this.choices, });
 
   @override
   State<UpdateQuestionCard> createState() => _UpdateQuestionCardState();
@@ -18,13 +19,19 @@ class UpdateQuestionCard extends StatefulWidget {
 
 class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
   TextEditingController questionController = TextEditingController();
+  final List<TextEditingController> _choiceControllers = [];
   late String? type;
+
 
   @override
   void initState() {
     super.initState();
     type= widget.type;
     questionController.text=widget.question;
+    for (int i = 0; i < widget.choices.length; i++) {
+      _choiceControllers.add(TextEditingController());
+      _choiceControllers[i].text = widget.choices[i]['optionText'];
+    }
   }
 
   int _multipleCount=0;
@@ -34,9 +41,55 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
   Widget multipleQ(int key) => Padding(
     padding: const EdgeInsets.only(bottom: 10.0),
     child: TextFormField(
+      controller: _getControllerForKey(key),
       decoration: InputDecoration(hintText: 'Option ${key + 1}'),
+
+      onChanged: (value) {
+        print(key);
+
+        if (_choiceControllers.length <= key) {
+          _choiceControllers.add(TextEditingController(text: value));
+        } else {
+          // Get the current selection position
+          final selection = _choiceControllers[key].selection;
+
+          // Update the controller's value with the new text and selection
+          _choiceControllers[key].value = TextEditingValue(
+            text: value,
+            selection: selection,
+          );
+        }
+
+        print(_choiceControllers);
+
+        if (_dataArray.length == key) {
+          _dataArray.add(value);
+          widget.onDataChange(
+            questionController.text,
+            type!,
+            _dataArray,
+            type == 'RATING_SCALE' ? 5 : 0,
+          );
+        } else {
+          _dataArray[key] = value;
+          widget.onDataChange(
+            questionController.text,
+            type!,
+            _dataArray,
+            type == 'RATING_SCALE' ? 5 : 0,
+          );
+        }
+      },
     ),
   );
+
+  TextEditingController _getControllerForKey(int key) {
+    if (_choiceControllers.length <= key) {
+      return TextEditingController();
+    } else {
+      return _choiceControllers[key];
+    }
+  }
   Widget buttonRow() => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -45,12 +98,14 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
         visible: _multipleCount > 0,
         child: IconButton(
           onPressed: () {
-            // if (_dataArray.isNotEmpty) {
-            //   _dataArray.removeAt(_dataArray.length - 1);
-            // }
+            if (_dataArray.isNotEmpty) {
+              _dataArray.removeAt(_dataArray.length - 1);
+              _choiceControllers.removeLast();
+            }
             setState(() {
               //_data = _dataArray.toString();
               _multipleCount--;
+
             });
           },
           icon:const Icon(
@@ -121,7 +176,7 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
                           ),
 
                           onChanged: (value) {
-                            widget.onDataChange(questionController.text,type!);
+                            widget.onDataChange(questionController.text,type!,_dataArray,type=='RATING_SCALE'?5:0);
                           },
                         ),
                       ),
@@ -156,10 +211,10 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
                               type = roleValue!;
 
                             });
-                            widget.onDataChange(questionController.text,type!);
+                            widget.onDataChange(questionController.text,type!,_dataArray,type=='RATING_SCALE'?5:0);
                           },
 
-                          items: <String>['TEXT','TRUE_FALSE', 'MULTIPLE_CHOICE']
+                          items: <String>['TEXT','TRUE_FALSE', 'MULTIPLE_CHOICE','RATING_SCALE']
                               .map<DropdownMenuItem<String>>((String rolevalue2) {
                             return DropdownMenuItem<String>(
                               value: rolevalue2,
@@ -172,7 +227,7 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
                       ),
                     ],
                   ),
-                  if(type == 'MULTIPLE_CHOICE')...[...List.generate(_multipleCount, (index) => multipleQ(index)),
+                  if(type == 'MULTIPLE_CHOICE')...[...List.generate(widget.choices.length, (index) => multipleQ(index)),
                     buttonRow(),
                     const SizedBox(height: 10),
                     //Visibility(visible: _dataArray.isNotEmpty, child: Text(_data!)),

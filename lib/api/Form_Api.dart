@@ -1,5 +1,7 @@
 
 
+
+
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -11,16 +13,40 @@ import 'package:sebsabi/model/FormModel.dart';
 import 'package:sebsabi/model/FormQuestion.dart';
 import 'package:sebsabi/model/FormResponse.dart';
 
+import '../model/MultipleChoiceOption.dart';
 import '../model/Status.dart';
 
 class FormApi{
-  static const String url = 'http://localhost:8080/api/core/forms';
+  static const String url = 'http://localhost:8080';
+
+  static Future<Map<String, dynamic>> UpdateForm(int formId, String? title,String? description,int? usageLimit, Status? status ) async {
+    final token=html.window.localStorage['auth_token'];
+    final createFormUrl = Uri.parse('$url/api/core/client/view/form/update?form_id=$formId');
+
+    if (token == null) {
+      throw Exception('Bearer token not found');
+    }
+
+    final response = await http.put(
+        createFormUrl, headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token',
+    },
+        body: jsonEncode(FormModel(title: title!, description: description!, usageLimit: usageLimit!, status: status!)));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> responseBody = jsonDecode(response.body);
+
+      return responseBody;
+    } else {
+      print("wrong");
+      throw Exception('Failed to Update form');
+    }
+
+
+
+  }
 
   static Future<int?> createForm(final String title,String description,int usageLimit, Status status ) async {
     final token=html.window.localStorage['auth_token'];
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
-    String clientUsername = decodedToken['sub'];
-    final createFormUrl = Uri.parse('$url/create?clientUsername=$clientUsername');
+    final createFormUrl = Uri.parse('$url/api/core/client/create/form');
 
     if (token == null) {
       throw Exception('Bearer token not found');
@@ -43,38 +69,62 @@ class FormApi{
 
   }
 
-  static Future<String?> addQuestionToForm(int? formID, String? questionText, String? questionType ) async{
-    final addQuestionUrl = Uri.parse('$url/add/question-to-form?formID=$formID');
-    final token=html.window.localStorage['auth_token'];
+  static Future<String?> addQuestionToForm(int? formID, String? questionText, String? questionType, List<String?> optionText, int? ratingScale ) async {
+    final addQuestionUrl = Uri.parse('$url/api/core/client/create/form/add/question-to-form?formID=$formID');
+    final token = html.window.localStorage['auth_token'];
+
     if (token == null) {
       throw Exception('Bearer token not found');
     }
+
+    // Create a list of MultipleChoiceOption from the optionText list
+    List<MultipleChoiceOption?> optionList = optionText
+        .map((option) => MultipleChoiceOption(optionText: option))
+        .toList();
+
+    // Create a FormQuestion object
+    FormQuestion formQuestion = FormQuestion(
+      questionText: questionText,
+      questionType: questionType,
+      multipleChoiceOptions: optionList,
+      ratingScale: ratingScale,
+    );
+
+    // Convert FormQuestion to a list for the API
+    List<FormQuestion> questionList = [formQuestion];
+
+    // Send the request to the API
     final response = await http.post(
-        addQuestionUrl, headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token',
-    },
-        body: jsonEncode(FormQuestion(questionText: questionText, questionType: questionType)));
+      addQuestionUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode(questionList),
+    );
+
     if (response.statusCode == 200) {
-
+      // Handle the success case
     } else {
-      throw Exception('Failed to add question to form');
+      print(response.statusCode);
+      throw Exception(response.body);
     }
-
   }
 
-  static Future<List<FormResponse>> fetchForms(Status status) async {
+
+  static Future<List<Map<String, dynamic>>> fetchForms(Status status) async {
 
     final token=html.window.localStorage['auth_token'];
-    Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
-    String clientEmail = decodedToken['sub'];
-    final getFormUrl = Uri.parse('$url/view/form?clientEmail=$clientEmail&status=${status?.toString().split('.').last}');// Replace with your actual authorization token
+
+    final getFormUrl = Uri.parse('$url/api/core/client/view/form/status?status=${status?.toString().split('.').last}');// Replace with your actual authorization token
     final response = await http.get(
       getFormUrl,
       headers: {'Authorization': 'Bearer $token'},
     );
 
     if (response.statusCode == 200) {
-      List<dynamic> jsonList = json.decode(response.body);
-      return jsonList.map((json) => FormResponse.fromJson(json)).toList();
+      final List<dynamic> jsonResponse = json.decode(response.body);
+      return jsonResponse.cast<Map<String, dynamic>>();
     } else {
       throw Exception('Failed to load forms');
     }
@@ -117,8 +167,51 @@ class FormApi{
       throw Exception('Failed to load questions');
     }
   }
+  static  Future<List<Map<String, dynamic>>> getProposalsByFormId(int formId) async {
+    final token=html.window.localStorage['auth_token'];
+    final getProposalUrl = Uri.parse('$url/api/core/client/view/form/proposal/$formId');
+    final response = await http.get(
+      getProposalUrl,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+    );
 
+    if (response.statusCode == 200) {
+      // If server returns an OK response, parse the JSON
+      final List<dynamic> jsonList = json.decode(response.body);
+      return jsonList.cast<Map<String, dynamic>>();
+    } else {
+      // If the server did not return a 200 OK response,
+      // throw an exception.
+      throw Exception('Failed to load proposals');
+    }
+  }
+ static Future<void> acceptProposal(int proposalId) async {
+   final token=html.window.localStorage['auth_token'];
+    final acceptProposalUrl = Uri.parse('$url/api/core/client/view/form/proposal/accept/$proposalId');
+    try {
+      final response = await http.post(
+        acceptProposalUrl,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token', // Adjust headers if needed
+        },
+      );
 
+      if (response.statusCode == 200) {
+        print('Proposal accepted successfully');
+      } else {
+        print('Failed to accept proposal. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error accepting proposal: $error');
+    }
+  }
 
 }
+
+
+
+
 
