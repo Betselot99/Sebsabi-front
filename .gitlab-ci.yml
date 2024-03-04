@@ -2,18 +2,18 @@
 #   - build
 #   - deploy
 
-# docker_build:
-#   image: docker:24.0.7
-#   stage: build
-#   variables:
-#     APP_NAME: "sebsabi-frontend-"
-#     DOCKER_IMAGE: $DOCKER_USER_NAME/${$APP_NAME}${CI_PROJECT_NAME}:$CI_COMMIT_SHA
-#   before_script:
-#     - docker login -u $DOCKER_USER_NAME -p $DOCKER_PASSWORD
-#   script:
-#     - echo $DOCKER_PASSWORD
-#     - docker build -t $DOCKER_IMAGE -f dockerfile .
-#     - docker push $DOCKER_IMAGE
+docker_build:
+  image: docker:24.0.7
+  stage: build
+  variables:
+    APP_NAME: "sebsabi-frontend-"
+    DOCKER_IMAGE: $DOCKER_USER_NAME/${$APP_NAME}${CI_PROJECT_NAME}:$CI_COMMIT_SHA
+  before_script:
+    - docker login -u $DOCKER_USER_NAME -p $DOCKER_PASSWORD
+  script:
+    - echo $DOCKER_PASSWORD
+    - docker build -t $DOCKER_IMAGE -f dockerfile .
+    - docker push $DOCKER_IMAGE
   
 update-manifest:
     stage: deploy
