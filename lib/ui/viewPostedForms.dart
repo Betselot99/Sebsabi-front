@@ -19,7 +19,7 @@ class ViewPostedForms extends StatefulWidget {
   final int usage;
   bool claimed;
   final int? assignedGigWorkerId;
-  final String? assignedGigWorkername;
+  String? assignedGigWorkername;
    ViewPostedForms({super.key, required this.formTitle, required this.formDescription, required this.usage, required this.id, required this.claimed, required this.assignedGigWorkerId, required this.assignedGigWorkername});
 
   @override
@@ -31,11 +31,13 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
   void initState() {
     super.initState();
     checkForForm();
+    checkForProgress();
   }
 
   late Future<List<Map<String, dynamic>>> forms;
   late bool formAvailable= false;
   late List<Map<String,dynamic>> formsList=[];
+  late int progress=0;
 
   int assignedGigWorkerId=0;
   String gigWorkerName="";
@@ -46,6 +48,7 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
     forms = FormApi.getProposalsByFormId(widget.id);
     //print(forms);
     formsList = await forms;
+
 
     for (var form in formsList) {
 
@@ -60,6 +63,10 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
         });
       }
     }
+  }
+  Future<void> checkForProgress() async {
+    progress= await FormApi.getClientJobStatus(widget.id);
+    print(progress);
   }
   static const int numItems = 20;
   List<bool> selected = List<bool>.generate(numItems, (int index) => false);
@@ -202,8 +209,8 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
                                           try{
                                             FormApi.acceptProposal(id);
                                             assignedGigWorkerId=formsList[index]['gigWorker']['id'];
-                                            gigWorkerLName=formsList[index]['gigWorker']['lastName'];
-                                            gigWorkerName=formsList[index]['gigWorker']['firstName'];
+                                            widget.assignedGigWorkername='${formsList[index]['gigWorker']['firstName']} ${formsList[index]['gigWorker']['lastName']}';
+
                                             widget.claimed=true;
                                             ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Proposal has been accepted'),));
                                           }catch(e){
@@ -245,7 +252,7 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
               SizedBox(height: 16.0),
 
               LinearProgressIndicator(
-                value: 0.5,
+                value: progress/100,
                 minHeight: 10.0,
                 backgroundColor: Colors.grey[300],
                 valueColor: AlwaysStoppedAnimation<Color>(Color(0XFF909300)),

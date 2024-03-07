@@ -87,17 +87,28 @@ class _FormsCardState extends State<FormsCard> {
                         ))),]
                     ),
                     const SizedBox(height:10),
-                    if(widget.claimed)...[
+                    Text("Applied People: ${widget.proposalNo}",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
+                      color:  Color(0XFF909300),
+                      fontSize: 15,
+                    ))),
+                    ]else if(widget.formStatus == "Claimed")...[
+                    Text("Title: ${widget.title}",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
+                      color:  Colors.grey,
+                      fontSize: 20,
+                    ))),
+                    Wrap(
+                        children: [Text("Description: ${widget.description}", maxLines: 5,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
+                          color:  Color(0XFFC8C8C8),
+                          fontSize: 12,
+
+                        ))),]
+                    ),
+                    const SizedBox(height:10),
                       Text("Claimed",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
                         color:  Color(0XFF909300),
                         fontSize: 15,
                       ))),
 
-                    ]else...[
-                    Text("Applied People: ${widget.proposalNo}",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
-                      color:  Color(0XFF909300),
-                      fontSize: 15,
-                    ))),]
                   ]else if(widget.formStatus == "Completed")...[
                     Text("Title: ${widget.title}",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
                       color:  Colors.grey,

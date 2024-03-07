@@ -69,7 +69,7 @@ class FormApi{
 
   }
 
-  static Future<String?> addQuestionToForm(int? formID, String? questionText, String? questionType, List<String?> optionText, int? ratingScale ) async {
+  static Future<String?> addQuestionToForm(int? formID, String? questionText, String? questionType, List<String?> multipleChoiceOption, int? ratingScale ) async {
     final addQuestionUrl = Uri.parse('$url/api/core/client/create/form/add/question-to-form?formID=$formID');
     final token = html.window.localStorage['auth_token'];
 
@@ -78,15 +78,13 @@ class FormApi{
     }
 
     // Create a list of MultipleChoiceOption from the optionText list
-    List<MultipleChoiceOption?> optionList = optionText
-        .map((option) => MultipleChoiceOption(optionText: option))
-        .toList();
+
 
     // Create a FormQuestion object
     FormQuestion formQuestion = FormQuestion(
       questionText: questionText,
       questionType: questionType,
-      multipleChoiceOptions: optionList,
+      multipleChoiceOptions: multipleChoiceOption,
       ratingScale: ratingScale,
     );
 
@@ -206,6 +204,31 @@ class FormApi{
       }
     } catch (error) {
       print('Error accepting proposal: $error');
+    }
+  }
+
+  static Future<int> getClientJobStatus(int formId) async {
+    final token=html.window.localStorage['auth_token'];
+    final proggressUrl = Uri.parse('$url/api/core/client/view/form/status/claimed?formId=$formId');
+
+    try {
+      final response = await http.get(proggressUrl, headers: {
+        'Authorization': 'Bearer $token', // Adjust headers if needed
+      },);
+
+      if (response.statusCode == 200) {
+        // Assuming the response body contains an integer representing the job status
+        return int.parse(response.body);
+      } else if (response.statusCode == 403) {
+        // Handle access denied
+        throw Exception('Access Denied:token');
+      } else {
+        // Handle other errors
+        throw Exception('Failed to get job status');
+      }
+    } catch (e) {
+      // Handle exceptions
+      throw Exception('Failed to connect to the server');
     }
   }
 

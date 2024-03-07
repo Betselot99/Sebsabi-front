@@ -35,19 +35,25 @@ class _PostedFormsState extends State<PostedForms> {
 
 
   Future<void> checkForForm() async {
-    forms = FormApi.fetchForms(Status.Posted);
-    //print(forms);
-    formsList = await forms;
-    for (var form in formsList) {
-      if (formsList.isEmpty) {
-        setState(() {
-          formAvailable = false;
-        });
-      } else {
-        setState(() {
-          formAvailable = true;
-        });
-      }
+    List<Status> statusesToFetch = [Status.Posted, Status.Claimed];
+    List<Map<String, dynamic>> allForms = [];
+
+    for (Status status in statusesToFetch) {
+      List<Map<String, dynamic>> forms = await FormApi.fetchForms(status);
+      allForms.addAll(forms);
+    }
+
+    formsList = allForms;
+    print(formsList);
+
+    if (formsList.isEmpty) {
+      setState(() {
+        formAvailable = false;
+      });
+    } else {
+      setState(() {
+        formAvailable = true;
+      });
     }
   }
   @override
@@ -77,7 +83,22 @@ class _PostedFormsState extends State<PostedForms> {
                         (index) =>  FormsCard(onTap: (){Navigator.push(
                             context,
                             MaterialPageRoute(
-                            builder: (context) =>ViewPostedForms(formTitle: formsList[index]['title'], formDescription: formsList[index]['description'], usage: formsList[index]['usageLimit'], id: formsList[index]['id'], claimed: formsList[index]['assignedGigWorker']==null?false:true, assignedGigWorkerId: formsList[index]['assignedGigWorker']['id'], assignedGigWorkername: '${formsList[index]['assignedGigWorker']['firstName']} ${formsList[index]['assignedGigWorker']['lastName']}',)));}, formStatus:formsList[index]['status'].toString(), title: formsList[index]['title'], description: formsList[index]['description'], claimed:formsList[index]['assignedGigWorker']==null?false:true, proposalNo: formsList[index]['proposals'].length,),
+                            builder: (context) =>ViewPostedForms(formTitle: formsList[index]['title'],
+                              formDescription: formsList[index]['description'],
+                              usage: formsList[index]['usageLimit'],
+                              id: formsList[index]['id'],
+                              claimed: formsList[index]['assignedGigWorker']==null?false:true,
+                              assignedGigWorkerId: formsList[index]['assignedGigWorker'] != null
+                                  ? formsList[index]['assignedGigWorker']['id']
+                                  : null,
+                                assignedGigWorkername: formsList[index]['assignedGigWorker'] != null
+                                    ? '${formsList[index]['assignedGigWorker']['firstName']} ${formsList[index]['assignedGigWorker']['lastName']}'
+                                    : null,)));},
+                          formStatus:formsList[index]['status'].toString(),
+                          title: formsList[index]['title'],
+                          description: formsList[index]['description'],
+                          claimed:formsList[index]['assignedGigWorker']==null?false:true,
+                          proposalNo: formsList[index]['proposals'].length,),
                   ),
                 ),
 
