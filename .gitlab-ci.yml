@@ -1,6 +1,6 @@
-# stages:
-#   - build
-#   - deploy
+stages:
+  - build
+  - deploy
 
 docker_build:
   image: docker:24.0.7
