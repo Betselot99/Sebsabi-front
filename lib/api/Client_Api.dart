@@ -7,7 +7,7 @@ import 'package:sebsabi/model/ClientAuthRequest.dart';
 import 'dart:html' as html;
 
 class ClientApi{
-  static const String url = 'http://api.sebsabi.b.gebeyalearning.com:8080';
+  static const String url = 'http://localhost:8080';
 
   static Future<String?> loginClient(String username,String password) async {
     final loginUrl = Uri.parse('$url/api/auth/login');// Replace 'your_api_url_here' with your actual API endpoint
@@ -97,7 +97,7 @@ try{
 
   static Future<void> UpdateClient(Map<String, dynamic> clientRequest ) async {
     final token=html.window.localStorage['auth_token'];
-    final createFormUrl = Uri.parse('$url/api/core/client//view/profile/update');
+    final createFormUrl = Uri.parse('$url/api/core/client/view/profile/update');
 
     if (token == null) {
       throw Exception('Bearer token not found');
