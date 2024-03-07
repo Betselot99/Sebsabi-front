@@ -7,7 +7,7 @@ import 'package:sebsabi/model/ClientAuthRequest.dart';
 import 'dart:html' as html;
 
 class AdminApi{
-  static const String url = 'http://localhost:8080';
+  static const String url = 'http://api.sebsabi.b.gebeyalearning.com:8080';
 
   static Future<List<Map<String, dynamic>>> fetchClients() async {
     final token=html.window.localStorage['auth_token'];
