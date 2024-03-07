@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sebsabi/api/Client_Api.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -15,6 +16,31 @@ class _ProfileState extends State<Profile> {
   TextEditingController companyNameController = TextEditingController();
   TextEditingController companyTypeController = TextEditingController();
   TextEditingController occupationController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    checkForProfile();
+  }
+  late Future<Map<String, dynamic>> forms;
+  late bool formAvailable= false;
+  late Map<String,dynamic> formsList;
+
+
+  Future<void> checkForProfile() async {
+    forms = ClientApi.getClientById();
+    //print(forms);
+    formsList = await forms;
+    setState(() {
+      fnameController.text=formsList['firstName'];
+      lnameController.text =formsList['lastName'];
+      emailController.text=formsList['email'];
+      companyNameController.text=formsList['companyName'];
+      companyTypeController.text=formsList['companyType'];
+      occupationController.text=formsList['occupation'];
+    });
+
+  }
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -225,7 +251,37 @@ class _ProfileState extends State<Profile> {
                         const SizedBox(height: 20,),
                     TextButton(
                       onPressed: () {
-                        print('TextButton pressed!');
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Enter New Password'),
+                              content: TextField(
+                                controller: passwordController,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                  hintText: 'New Password',
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    // Close the dialog and do something with the entered password
+                                    Navigator.of(context).pop(passwordController.text);
+                                  },
+                                  child: Text('Save'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    // Close the dialog without saving
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Cancel'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       },
                       child: Row(
                         children: [
@@ -245,7 +301,31 @@ class _ProfileState extends State<Profile> {
 
                         Center(
                           child: ElevatedButton(
-                            onPressed: ()async{},
+                            onPressed: ()async{
+                              final clientRequest={
+                                'firstName':fnameController.text,
+                                'lastName':lnameController.text,
+                                'email':emailController.text,
+                                'companyName':companyNameController.text,
+                                'companyType':companyTypeController.text,
+                                'occupation':occupationController.text,
+                                'password':passwordController.text==null? formsList['password']:passwordController.text,
+                              };
+                              try{
+                                ClientApi.UpdateClient(clientRequest);
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text('Profile has been updated'),));
+                                setState(() {
+                                  checkForProfile();
+                                });
+
+
+                              }catch(e){
+                                print(e);
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text('Something seems to be wrong, try again.'),));
+                              }
+                            },
                             child: const Text('Save changes'),
                           ),
                         ),

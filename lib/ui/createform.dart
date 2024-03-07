@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sebsabi/api/Form_Api.dart';
 import 'package:sebsabi/model/Status.dart';
+import 'package:sebsabi/ui/home.dart';
 import 'package:sebsabi/ui/widgets/description_card.dart';
 import 'package:sebsabi/ui/widgets/pagesnavbar.dart';
 import 'package:sebsabi/ui/widgets/question_card.dart';
@@ -64,13 +65,17 @@ class _CreateFormState extends State<CreateForm> {
   String? _questionError;
   String question='' ;
   String type= '';
-  final List<Map<String, String>> dataList = [];
+  List<String?> choices =[];
+  int rate=0;
+  final List<Map<String, dynamic>> dataList = [];
 
 // Add an item to the dataList
-  void addItemToDataList(String question, String type, int index) {
-    Map<String, String> newItem = {
+  void addItemToDataList(String question, String type, int index, List<String?> choices, int rate) {
+    Map<String, dynamic> newItem = {
       'question': question,
       'type': type,
+      'choices': choices,
+      'rate':rate
     };
     if(dataList.length==index){
     //dataList.removeAt(index);
@@ -110,12 +115,14 @@ class _CreateFormState extends State<CreateForm> {
                       Column(
                         children: List.generate(
                           _questionCount, // Adjust the number of items as needed
-                              (index) => QuestionCard(questionNumber: index+1,onDataChange: ( question,  type,) {
+                              (index) => QuestionCard(questionNumber: index+1,onDataChange: ( question,  type, choices,rate) {
                                 setState((){
                                   print(index);
                                   this.question=question;
                                   this.type=type;
-                                  addItemToDataList(question, type, index);
+                                  this.choices=choices;
+                                  this.rate=rate;
+                                  addItemToDataList(question, type, index,choices,rate);
                                },);
 
                               },questionError: _questionError,),
@@ -141,10 +148,14 @@ class _CreateFormState extends State<CreateForm> {
                                   int? formId= await FormApi.createForm(title, description, 10,Status.Draft);
                                   print(formId);
                                   try {
-                                    for (Map<String, String> questionData in dataList) {
+                                    for (Map<String, dynamic> questionData in dataList) {
                                       final questionText = questionData['question'];
                                       final questionType = questionData['type'];
-                                      await FormApi.addQuestionToForm(formId, questionText, questionType);
+                                      final multipleChoiceOptions = questionData['choices'];
+                                      final ratingScale = questionData['rate'];
+                                      print(multipleChoiceOptions);
+
+                                      await FormApi.addQuestionToForm(formId, questionText, questionType, multipleChoiceOptions,ratingScale);
 
                                     }
                                   } catch (e) {
@@ -152,6 +163,9 @@ class _CreateFormState extends State<CreateForm> {
                                     print('Error: $e');
                                   }
                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Form saved as draft'),));
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => Home()));
 
                                 }catch(e){
                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem please try agian'),));
@@ -179,10 +193,12 @@ class _CreateFormState extends State<CreateForm> {
                                 int? formId= await FormApi.createForm(title, description, 10,Status.Posted);
                                 print(formId);
                                 try {
-                                  for (Map<String, String> questionData in dataList) {
+                                  for (Map<String, dynamic> questionData in dataList) {
                                     final questionText = questionData['question'];
                                     final questionType = questionData['type'];
-                                    await FormApi.addQuestionToForm(formId, questionText, questionType);
+                                    final multipleChoiceOptions = questionData['choices'];
+                                    final ratingScale = questionData['rate'];
+                                    await FormApi.addQuestionToForm(formId, questionText, questionType,multipleChoiceOptions, ratingScale);
 
                                   }
                                 } catch (e) {
@@ -190,6 +206,10 @@ class _CreateFormState extends State<CreateForm> {
                                   print('Error: $e');
                                 }
                                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Form has been created'),));
+
+                                Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => Home()));
 
                               }catch(e){
                                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem please try agian'),));

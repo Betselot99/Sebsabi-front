@@ -19,7 +19,7 @@ class _UpdateDescriptionCardState extends State<UpdateDescriptionCard> {
   void initState() {
     super.initState();
   titleController.text=widget.title;
-  descriptionController.text=widget.title;
+  descriptionController.text=widget.description;
   }
 
   String? _descriptionError;

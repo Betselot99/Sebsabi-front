@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sebsabi/provider/Client_provider.dart';
 import 'package:sebsabi/provider/form_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:sebsabi/ui/admin/admin_home.dart';
 import 'package:sebsabi/ui/home.dart';
 import 'package:sebsabi/ui/landing.dart';
 
@@ -23,9 +24,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final storedToken = ClientApi.getTokenFromLocalStorage();
     bool hasExpired = false;
+    String ifAdmin='';
 
     if (storedToken != null) {
       Map<String, dynamic> decodedToken = JwtDecoder.decode(storedToken);
+      ifAdmin=decodedToken['sub'];
       hasExpired = JwtDecoder.isExpired(storedToken);
     }
     return MultiProvider(
@@ -40,7 +43,7 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0XFF909300)),
           useMaterial3: true,
         ),
-        home: storedToken != null && !hasExpired ? Home() : Landing(),
+        home: storedToken != null && !hasExpired ? ifAdmin=='admin'?AdminHome():Home() : Landing(),
       ),
     );
   }

@@ -45,11 +45,7 @@ class _LogInFormState extends State<LogInForm> {
       setState(() {
         _emailErrorText = 'Email is required';
       });
-    } else if (!isEmailValid(value)) {
-      setState(() {
-        _emailErrorText = 'Enter a valid email address';
-      });
-    } else {
+    }  else {
       setState(() {
         _emailErrorText = null;
       });
@@ -80,13 +76,19 @@ class _LogInFormState extends State<LogInForm> {
           bool hasExpired = JwtDecoder.isExpired(token);
           if (decodedToken.containsKey('sub') && !hasExpired) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('client is logged in'),));
+              content: Text('User is logged in'),));
             Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
-            print(decodedToken['sub']);
+            var ifAdmin= decodedToken['sub'];
+            if(ifAdmin=='admin'){
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AdminHome()),
+              );
+            }else{
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const Home()),
-            );
+            );}
           } else {
             // Token is invalid, handle accordingly (e.g., show an error)
             html.window.localStorage.remove('auth_token');
@@ -195,7 +197,7 @@ class _LogInFormState extends State<LogInForm> {
       ),
       const SizedBox(height: 16),
       ElevatedButton(
-        onPressed:(){ Navigator.pushReplacement(context, PageTransition(type: PageTransitionType.rightToLeft, child: AdminHome()));}, //_submitForm,
+        onPressed:_submitForm, //_submitForm,
         child: const Text('Log In'),
       ),
       const SizedBox(height: 20,),

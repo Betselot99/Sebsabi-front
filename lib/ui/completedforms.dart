@@ -34,7 +34,7 @@ class _CompletedFormsState extends State<CompletedForms> {
 
 
   Future<void> checkForForm() async {
-    forms = FormApi.fetchForms(Status.Completed);
+    //forms = FormApi.fetchForms(Status.Completed);
     //print(forms);
     formsList = await forms;
     for (var form in formsList) {
@@ -78,7 +78,7 @@ class _CompletedFormsState extends State<CompletedForms> {
                 Wrap(
                   children: List.generate(
                     formsList.length, // Adjust the number of items as needed
-                        (index) =>  FormsCard(formStatus:formsList[index].status.toString(), title: formsList[index].title, description: formsList[index].description,),
+                        (index) =>  FormsCard(formStatus:formsList[index].status.toString(), title: formsList[index].title, description: formsList[index].description, claimed: false, proposalNo: 0,),
                   ),
                 ),
 
