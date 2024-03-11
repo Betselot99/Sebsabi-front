@@ -283,24 +283,24 @@ class _SignUpFormState extends State<SignUpForm> {
                   ),
                   const SizedBox(height: 20,),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20, right:20),
+                    padding: const EdgeInsets.only(left: 20, right: 20),
                     child: TextFormField(
                       controller: fnameController,
                       textAlignVertical: TextAlignVertical.bottom,
                       keyboardType: TextInputType.name,
                       style: const TextStyle(color: Colors.black),
-                      decoration:  InputDecoration(
-                        fillColor:  Colors.white,
+                      decoration: InputDecoration(
+                        fillColor: Colors.white,
                         filled: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 15, horizontal: 10), // Adjust content padding
                         enabledBorder: OutlineInputBorder(
-                          borderSide:
-                          const BorderSide(width: 1, color: Colors.white), //<-- SEE HERE
+                          borderSide: BorderSide(width: 1, color: Colors.white),
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         hintText: 'First Name',
                         errorText: _firstNameErrorText,
-                        focusedBorder:OutlineInputBorder(
-                          borderSide: const BorderSide(color: Colors.white, width: 1.0),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white, width: 1.0),
                           borderRadius: BorderRadius.circular(25.0),
                         ),
                       ),
@@ -308,6 +308,7 @@ class _SignUpFormState extends State<SignUpForm> {
                       onChanged: _validateFirstName,
                     ),
                   ),
+
 
                   //last Name
                   const SizedBox(height: 20,),

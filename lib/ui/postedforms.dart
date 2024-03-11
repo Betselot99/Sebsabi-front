@@ -66,11 +66,24 @@ class _PostedFormsState extends State<PostedForms> {
             fontSize: 20,
           ))),
             const SizedBox(height: 20),
-          ]else...[Text("Posted Forms", style: GoogleFonts.poppins(textStyle: const TextStyle(
-            color:  Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-          ))),
+          ]else...[Row(
+            children: [
+              Text("Posted Forms", style: GoogleFonts.poppins(textStyle: const TextStyle(
+                color:  Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.w500,
+              ))),
+              IconButton(
+                icon: Icon(Icons.refresh),
+                onPressed: () {
+                  checkForForm();
+
+                  print('Reload button pressed');
+                },
+                tooltip: 'Reload',
+              )
+            ],
+          ),
             const SizedBox(height: 20),],
           Wrap(
             children: [

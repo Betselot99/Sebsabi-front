@@ -40,11 +40,8 @@ class _MyFormsState extends State<MyForms> {
     forms = FormApi.fetchForms(Status.Draft);
     //print(forms);
     formsList = await forms;
-
-
+    print(formsList.length);
     for (var form in formsList) {
-
-
       if (formsList.isEmpty) {
         setState(() {
           formAvailable = false;
@@ -69,11 +66,24 @@ class _MyFormsState extends State<MyForms> {
           fontSize: 20,
         ))),
           const SizedBox(height: 20),
-        ]else...[Text("My Forms", style: GoogleFonts.poppins(textStyle: const TextStyle(
-          color:  Colors.black,
-          fontSize: 20,
-          fontWeight: FontWeight.w500,
-        ))),
+        ]else...[Row(
+          children: [
+            Text("My Forms", style: GoogleFonts.poppins(textStyle: const TextStyle(
+              color:  Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.w500,
+            ))),
+            IconButton(
+    icon: Icon(Icons.refresh),
+    onPressed: () {
+      checkForForm();
+
+    print('Reload button pressed');
+    },
+    tooltip: 'Reload',
+    )
+          ],
+        ),
           const SizedBox(height: 20),],
         Wrap(
           children: [

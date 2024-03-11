@@ -24,6 +24,7 @@ class _LogInFormState extends State<LogInForm> {
   bool _obscureText = true;
   String? _emailErrorText;
   String? _passwordErrorText;
+  bool isLoading = false;
 
   void _validatePassword(String value) {
     if (value.isEmpty) {
@@ -71,10 +72,16 @@ class _LogInFormState extends State<LogInForm> {
         }
       else{
         try{
+          setState(() {
+            isLoading = true; // Set loading state to true
+          });
           final token = await ClientApi.loginClient(emailController.text, passwordController.text);
           Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
           bool hasExpired = JwtDecoder.isExpired(token);
           if (decodedToken.containsKey('sub') && !hasExpired) {
+            setState(() {
+              isLoading = false; // Set loading state to true
+            });
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('User is logged in'),));
             Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
@@ -92,6 +99,9 @@ class _LogInFormState extends State<LogInForm> {
           } else {
             // Token is invalid, handle accordingly (e.g., show an error)
             html.window.localStorage.remove('auth_token');
+            setState(() {
+              isLoading = false; // Set loading state to true
+            });
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('wrong password and email'),));
             print(token);
           }
@@ -99,7 +109,10 @@ class _LogInFormState extends State<LogInForm> {
         }catch(e){
           html.window.localStorage.remove('auth_token');
           print('Error: $e');
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('wrong password and email'),));
+          setState(() {
+            isLoading = false; // Set loading state to true
+          });
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem please try again.'),));
         }
       }
     }
@@ -198,7 +211,12 @@ class _LogInFormState extends State<LogInForm> {
       const SizedBox(height: 16),
       ElevatedButton(
         onPressed:_submitForm, //_submitForm,
-        child: const Text('Log In'),
+        child:  isLoading
+            ? const CircularProgressIndicator(
+          strokeWidth: 2,  // Adjust the thickness of the indicator
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        ) // Show loading indicator if _isLoading is true
+            : const Text('Log In'),
       ),
       const SizedBox(height: 20,),
 

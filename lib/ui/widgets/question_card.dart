@@ -36,12 +36,18 @@ int i=0;
     child: TextFormField(
       controller: _getControllerForKey(key),
       decoration: InputDecoration(hintText: 'Option ${key + 1}'),
-
       onChanged: (value) {
-        print(key);
+
+        print(value);
+
 
         if (_choiceControllers.length <= key) {
-          _choiceControllers.add(TextEditingController(text: value));
+          _choiceControllers.add(
+              TextEditingController.fromValue(
+                  TextEditingValue(
+                    text: value,
+                    selection: TextSelection.collapsed(offset: value.length),
+                  ),));
         } else {
           // Get the current selection position
           final selection = _choiceControllers[key].selection;
@@ -92,16 +98,30 @@ int i=0;
         visible: _multipleCount > 0,
         child: IconButton(
             onPressed: () {
+              if(_multipleCount == _choiceControllers.length){
               if (_dataArray.isNotEmpty) {
                 _dataArray.removeAt(_dataArray.length - 1);
                 _choiceControllers.removeLast();
-              }
-              setState(() {
-                //_data = _dataArray.toString();
-                _multipleCount--;
 
-              });
-            },
+                setState(() {
+                  //_data = _dataArray.toString();
+                  _multipleCount--;
+                });
+                widget.onDataChange(
+                  questionController.text,
+                  type,
+                  type == 'MULTIPLE_CHOICE' ? _dataArray:[],
+                  type == 'RATING_SCALE' ? 5 : 0,
+                );
+              }
+            }else{
+                setState(() {
+                  //_data = _dataArray.toString();
+                  _multipleCount--;
+                });
+        }
+          },
+
             icon:const Icon(
                 Icons.remove_circle,
               ),
@@ -224,7 +244,9 @@ int i=0;
                     buttonRow(),
                     const SizedBox(height: 10),
                     const SizedBox(height: 30),
-                    Text("$_dataArray")
+                    Text("$_dataArray"),
+                    Text("${_choiceControllers.length}"),
+                    Text("$_multipleCount")
                   
                   ],
                   if(type == 'RATING_SCALE')...[

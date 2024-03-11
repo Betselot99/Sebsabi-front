@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class UpdateQuestionCard extends StatefulWidget {
-  final String type;
-  final String question;
+
+  String? question;
+  String? type;
+  List<String?> choices;
+
   final void Function(String, String, List<String?>, int) onDataChange;
   final int questionNumber;
   late final String? questionError;
-  final List <dynamic> choices;
 
 
 
-  UpdateQuestionCard({super.key,required this.questionNumber, required this.onDataChange, this.questionError, required this.type, required this.question, required this.choices, });
+  UpdateQuestionCard({super.key, required this.choices, this.type, this.question, required this.questionNumber, required this.onDataChange, this.questionError, });
 
   @override
   State<UpdateQuestionCard> createState() => _UpdateQuestionCardState();
@@ -18,25 +21,35 @@ class UpdateQuestionCard extends StatefulWidget {
 }
 
 class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
-  TextEditingController questionController = TextEditingController();
-  final List<TextEditingController> _choiceControllers = [];
-  late String? type;
-
 
   @override
   void initState() {
     super.initState();
-    type= widget.type;
-    questionController.text=widget.question;
-    for (int i = 0; i < widget.choices.length; i++) {
-      _choiceControllers.add(TextEditingController());
-      _choiceControllers[i].text = widget.choices[i]['optionText'];
+    questionController.text = widget.question!;
+    type = widget.type!;
+    _multipleCount= widget.choices.length;
+    for (String? choice in widget.choices) {
+      TextEditingController controller = TextEditingController();
+      controller.text = choice ?? ""; // Set the initial text for the controller
+      _choiceControllers.add(controller);
+      _dataArray=widget.choices;
     }
-  }
 
+  }
+  List<TextEditingController> _choiceControllers = [];
+  TextEditingController questionController = TextEditingController();
+  TextEditingController maxNumberController = TextEditingController();
+
+  double rating = 1;
+  int i=0;
+  String type='TEXT';
   int _multipleCount=0;
-  final List<String?> _dataArray = [];    //add this
-  final String _data = '';
+   List<String?> _dataArray = [];    //add this
+
+
+
+
+
 
   Widget multipleQ(int key) => Padding(
     padding: const EdgeInsets.only(bottom: 10.0),
@@ -48,7 +61,12 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
         print(key);
 
         if (_choiceControllers.length <= key) {
-          _choiceControllers.add(TextEditingController(text: value));
+          _choiceControllers.add(
+              TextEditingController.fromValue(
+                TextEditingValue(
+                  text: value,
+                  selection: TextSelection.collapsed(offset: value.length),
+                ),));
         } else {
           // Get the current selection position
           final selection = _choiceControllers[key].selection;
@@ -66,16 +84,16 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
           _dataArray.add(value);
           widget.onDataChange(
             questionController.text,
-            type!,
-            _dataArray,
+            type,
+            type == 'MULTIPLE_CHOICE' ? _dataArray:[],
             type == 'RATING_SCALE' ? 5 : 0,
           );
         } else {
           _dataArray[key] = value;
           widget.onDataChange(
             questionController.text,
-            type!,
-            _dataArray,
+            type,
+            type == 'MULTIPLE_CHOICE' ? _dataArray:[],
             type == 'RATING_SCALE' ? 5 : 0,
           );
         }
@@ -90,6 +108,7 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
       return _choiceControllers[key];
     }
   }
+
   Widget buttonRow() => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -98,16 +117,30 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
         visible: _multipleCount > 0,
         child: IconButton(
           onPressed: () {
-            if (_dataArray.isNotEmpty) {
-              _dataArray.removeAt(_dataArray.length - 1);
-              _choiceControllers.removeLast();
-            }
-            setState(() {
-              //_data = _dataArray.toString();
-              _multipleCount--;
+            if(_multipleCount == _choiceControllers.length){
+              if (_dataArray.isNotEmpty) {
+                _dataArray.removeAt(_dataArray.length - 1);
+                _choiceControllers.removeLast();
 
-            });
+                setState(() {
+                  //_data = _dataArray.toString();
+                  _multipleCount--;
+                });
+                widget.onDataChange(
+                  questionController.text,
+                  type,
+                  type == 'MULTIPLE_CHOICE' ? _dataArray:[],
+                  type == 'RATING_SCALE' ? 5 : 0,
+                );
+              }
+            }else{
+              setState(() {
+                //_data = _dataArray.toString();
+                _multipleCount--;
+              });
+            }
           },
+
           icon:const Icon(
             Icons.remove_circle,
           ),
@@ -135,13 +168,12 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
         .size
         .width;
     return Card(
-      
         child:ClipPath(
           child: Container(
             padding: EdgeInsets.all(16),
             decoration: BoxDecoration(
               border: Border(
-                top: BorderSide(color: Color(0XFF909300), width: 10),
+                left: BorderSide(color: Color(0XFF909300).withOpacity(0.5), width: 10),
               ),
             ),
             child: Padding(
@@ -176,7 +208,7 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
                           ),
 
                           onChanged: (value) {
-                            widget.onDataChange(questionController.text,type!,_dataArray,type=='RATING_SCALE'?5:0);
+                            widget.onDataChange(questionController.text,type,type == 'MULTIPLE_CHOICE' ? _dataArray:[],type=='RATING_SCALE'?5:0);
                           },
                         ),
                       ),
@@ -211,10 +243,10 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
                               type = roleValue!;
 
                             });
-                            widget.onDataChange(questionController.text,type!,_dataArray,type=='RATING_SCALE'?5:0);
+                            widget.onDataChange(questionController.text,type,type == 'MULTIPLE_CHOICE' ? _dataArray:[],type=='RATING_SCALE'?5:0);
                           },
 
-                          items: <String>['TEXT','TRUE_FALSE', 'MULTIPLE_CHOICE','RATING_SCALE']
+                          items: <String>['TEXT','TRUE_FALSE', 'MULTIPLE_CHOICE', 'RATING_SCALE']
                               .map<DropdownMenuItem<String>>((String rolevalue2) {
                             return DropdownMenuItem<String>(
                               value: rolevalue2,
@@ -227,12 +259,46 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
                       ),
                     ],
                   ),
-                  if(type == 'MULTIPLE_CHOICE')...[...List.generate(widget.choices.length, (index) => multipleQ(index)),
+                  if(type == 'MULTIPLE_CHOICE')...[...List.generate(_multipleCount, (index) => multipleQ(index)),
                     buttonRow(),
                     const SizedBox(height: 10),
-                    //Visibility(visible: _dataArray.isNotEmpty, child: Text(_data!)),
                     const SizedBox(height: 30),
-                    //Text("${_dataArray}")
+                    Text("$_dataArray"),
+                    Text("${_choiceControllers.length}"),
+                    Text("$_multipleCount")
+
+                  ],
+                  if(type == 'RATING_SCALE')...[
+
+                    const SizedBox(height:20),
+                    Row(
+                      children: [
+                        const SizedBox(width:10),
+                        RatingBar.builder(
+                          initialRating: 1,
+                          minRating: 1,
+                          direction: Axis.horizontal,
+                          allowHalfRating: true,
+                          itemCount: 5,
+                          itemSize: 20,
+                          itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+                          itemBuilder: (context, _) => const Icon(
+                            Icons.circle,
+                            color: Colors.amber,
+
+                          ),
+                          onRatingUpdate: (rating) {
+                            print(rating);
+                            setState(() {
+                              i=5;
+                            });
+
+                          },
+                        ),
+
+                      ],
+                    ),
+
                   ]
                 ],
               ),

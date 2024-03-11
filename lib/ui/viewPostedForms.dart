@@ -37,7 +37,7 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
   late Future<List<Map<String, dynamic>>> forms;
   late bool formAvailable= false;
   late List<Map<String,dynamic>> formsList=[];
-  late int progress=0;
+  late int progress=-1;
 
   int assignedGigWorkerId=0;
   String gigWorkerName="";
@@ -45,6 +45,7 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
 
 
   Future<void> checkForForm() async {
+
     forms = FormApi.getProposalsByFormId(widget.id);
     //print(forms);
     formsList = await forms;
@@ -65,8 +66,16 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
     }
   }
   Future<void> checkForProgress() async {
-    progress= await FormApi.getClientJobStatus(widget.id);
-    print(progress);
+
+    try {
+      var prog = await FormApi.getClientJobStatus(widget.id);
+      setState(() {
+        progress=prog;
+      });
+      print(progress);
+    }catch(e){
+      print(e);
+    }
   }
   static const int numItems = 20;
   List<bool> selected = List<bool>.generate(numItems, (int index) => false);
@@ -242,21 +251,44 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Assigned To ${widget.assignedGigWorkername}',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Assigned To ${widget.assignedGigWorkername}',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: () {
+
+              checkForProgress();
+              // Add your reload logic here
+              print('Reload button pressed');
+            },
+            tooltip: 'Reload',
+          )
+                ],
               ),
               SizedBox(height: 16.0),
 
-              LinearProgressIndicator(
-                value: progress/100,
-                minHeight: 10.0,
-                backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0XFF909300)),
-              ),
+              if(progress.isNegative)...[
+                LinearProgressIndicator(
+                  minHeight: 10.0,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0XFF909300)),
+                ),
+              ]else...[
+                LinearProgressIndicator(
+                  value: progress/100,
+                  minHeight: 10.0,
+                  backgroundColor: Colors.grey[300],
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0XFF909300)),
+                ),
+              ]
             ],
           ),
         ),

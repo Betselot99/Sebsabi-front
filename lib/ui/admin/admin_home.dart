@@ -27,15 +27,15 @@ class _AdminHomeState extends State<AdminHome> {
 
   List<Widget> views = [
     Padding(
-      padding: const EdgeInsets.only(top: 50, left: 100),
+      padding: const EdgeInsets.only(top: 50, left: 100,right:100),
       child: ClientPage(),
     ),
     Padding(
-      padding: const EdgeInsets.only(top: 50, left: 100),
+      padding: const EdgeInsets.only(top: 50, left: 100,right:100),
       child: WorkerPage(),
     ),
     Padding(
-      padding: const EdgeInsets.only(top: 50, left: 100),
+      padding: const EdgeInsets.only(top: 50, left: 100,right:100),
       child: SiteAnalytics(),
     ),
 
