@@ -18,7 +18,7 @@ class FrontUI extends StatelessWidget {
 
         CircleAvatar(
           radius: w/12,
-          backgroundImage:const AssetImage("logo.png"),
+          backgroundImage:const AssetImage('logo.png'),
           backgroundColor: Colors.white,
         ),
         Text("Sebsabi", style: GoogleFonts.poppins(textStyle: TextStyle(

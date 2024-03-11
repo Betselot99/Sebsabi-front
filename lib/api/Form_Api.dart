@@ -19,16 +19,16 @@ import '../model/Status.dart';
 class FormApi{
   static const String url = 'http://localhost:8080';
 
-  static Future<Map<String, dynamic>> UpdateForm(int formId, String? title,String? description,int? usageLimit, Status? status ) async {
+  static Future<Map<String, dynamic>> updateForm(int formId, String? title,String? description,int? usageLimit, Status? status ) async {
     final token=html.window.localStorage['auth_token'];
-    final createFormUrl = Uri.parse('$url/api/core/client/view/form/update?form_id=$formId');
+    final updateFormUrl = Uri.parse('$url/api/core/client/view/form/update?formId=$formId');
 
     if (token == null) {
       throw Exception('Bearer token not found');
     }
 
     final response = await http.put(
-        createFormUrl, headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token',
+        updateFormUrl, headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token',
     },
         body: jsonEncode(FormModel(title: title!, description: description!, usageLimit: usageLimit!, status: status!)));
     if (response.statusCode == 200) {
@@ -36,7 +36,7 @@ class FormApi{
 
       return responseBody;
     } else {
-      print("wrong");
+      print(response.statusCode);
       throw Exception('Failed to Update form');
     }
 
@@ -146,25 +146,7 @@ class FormApi{
   }
 
 
-  static Future<List<FormQuestion>> getQuestions(int formId) async {
-    final token=html.window.localStorage['auth_token'];
-    final getQuestionUrl = Uri.parse('$url/view/questionOfForm?formID=$formId');
-    final response = await http.get(
-      getQuestionUrl,
-      headers: {
-        'Authorization': 'Bearer $token',
-      },
-    );
 
-    if (response.statusCode == 200) {
-      List<dynamic> jsonResponse = json.decode(response.body);
-      return jsonResponse.map((question) => FormQuestion.fromJson(question)).toList();
-    } else {
-      // Handle error
-      print("Error: ${response.statusCode}");
-      throw Exception('Failed to load questions');
-    }
-  }
   static  Future<List<Map<String, dynamic>>> getProposalsByFormId(int formId) async {
     final token=html.window.localStorage['auth_token'];
     final getProposalUrl = Uri.parse('$url/api/core/client/view/form/proposal/$formId');

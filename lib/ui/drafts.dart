@@ -15,8 +15,8 @@ final int id;
   final String formTitle;
   final String formDescription;
   final int usage;
-  final List<dynamic> questions;
-  const Drafts({super.key, required this.formTitle, required this.formDescription, required this.usage,  required this.questions, required this.id});
+   List<dynamic> questions;
+   Drafts({super.key, required this.formTitle, required this.formDescription, required this.usage,  required this.questions, required this.id});
 
   @override
   State<Drafts> createState() => _DraftsState();
@@ -28,6 +28,25 @@ class _DraftsState extends State<Drafts> {
   void initState() {
     super.initState();
     print(widget.questions.length);
+    _questionCount=widget.questions.length;
+
+   dataList = widget.questions.map((question) {
+      List<String> choices = [];
+
+      if (question['multipleChoiceOptions'] is List<dynamic>) {
+        // Cast to the correct type if it's a list of dynamic
+        choices = (question['multipleChoiceOptions'] as List<dynamic>)
+            .map((option) => option['optionText'] as String)
+            .toList();
+      }
+
+      return {
+        'question': question['questionText'], // Assuming 'questionText' is the correct property name
+        'type': question['questionType'], // Assuming 'questionType' is the correct property name
+        'choices': choices, // Extracted optionText values
+        'rate': question['ratingScale'] // Assuming 'ratingScale' is the correct property name
+      };
+    }).toList();
 
   }
 
@@ -35,7 +54,7 @@ class _DraftsState extends State<Drafts> {
 
 
 
-  int _questionCount=1;
+  int _questionCount=0;
   Widget buttonRow() => Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     crossAxisAlignment: CrossAxisAlignment.center,
@@ -46,6 +65,7 @@ class _DraftsState extends State<Drafts> {
           onPressed: () {
 
             setState(() {
+              widget.questions.removeLast();
               dataList.removeLast();
               _questionCount--;
             });
@@ -58,15 +78,11 @@ class _DraftsState extends State<Drafts> {
       IconButton(
         onPressed: () {
           setState(() {
-            if(question.isNotEmpty){
+
               _questionError= null;
               _questionCount++;
               question='';
-            }else{
-              _questionError="please fill out this field";
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Please fill out Question'),));
-            }
+
 
 
           });
@@ -86,7 +102,7 @@ class _DraftsState extends State<Drafts> {
   String type= '';
   List<String?> choices =[];
   int rate=0;
-  final List<Map<String, dynamic>> dataList = [];
+   List<Map<String, dynamic>> dataList = [];
 
 // Add an item to the dataList
   void addItemToDataList(String question, String type, int index, List<String?> choices, int rate) {
@@ -133,7 +149,7 @@ class _DraftsState extends State<Drafts> {
                     }, title: widget.formTitle, description: widget.formDescription,),
                     Column(
                       children: List.generate(
-                        widget.questions.length, // Adjust the number of items as needed
+                        _questionCount, // Adjust the number of items as needed
                             (index) => UpdateQuestionCard(questionNumber: index+1,onDataChange: ( question,  type,choices, rate) {
                           setState((){
                             print(index);
@@ -144,7 +160,12 @@ class _DraftsState extends State<Drafts> {
                             addItemToDataList(question, type, index, choices, rate);
                           },);
 
-                        },questionError: _questionError, question: widget.questions[index]['questionText'], type: widget.questions[index]['questionType'], choices: widget.questions[index]['multipleChoiceOptions'],),
+                        },questionError: _questionError, question: _questionCount > widget.questions.length? "" : widget.questions[index]['questionText'],
+                              type: _questionCount > widget.questions.length? "TEXT" : widget.questions[index]['questionType'],
+                              choices:_questionCount > widget.questions.length? []: (widget.questions[index]['multipleChoiceOptions'] as List<dynamic>)
+                                  .map((option) => option['optionText'] as String)
+                                  .toList(),
+                            ),
                       ),
                     ),
                     buttonRow(),
@@ -153,7 +174,11 @@ class _DraftsState extends State<Drafts> {
                     Text("title error: ${_titleError}"),
                     Text("description error: $_descriptionError"),
 
-                    Text("${dataList.indexed}"),
+                    Text("new questionsss ${dataList.indexed}"),
+
+
+                    Text(" question count ${_questionCount}"),
+
 
 
                     Row(
@@ -163,7 +188,7 @@ class _DraftsState extends State<Drafts> {
                           onPressed: ()async{
                             if(title.isNotEmpty && description.isNotEmpty && _titleError == null && _descriptionError == null ){
                               try {
-                                final response = await FormApi.UpdateForm(
+                                final response = await FormApi.updateForm(
                                     widget.id, title, description, 10,
                                     Status.Draft);
                                 if(response.isNotEmpty){
@@ -197,7 +222,7 @@ class _DraftsState extends State<Drafts> {
                         ElevatedButton(
                           onPressed: ()async{
                               try {
-                                final response = await FormApi.UpdateForm(
+                                final response = await FormApi.updateForm(
                                     widget.id, title, description, 10,
                                     Status.Posted);
                                 if(response.isNotEmpty){

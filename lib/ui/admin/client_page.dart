@@ -7,9 +7,12 @@ class ClientPage extends StatefulWidget {
 
   @override
   State<ClientPage> createState() => _ClientPageState();
+
 }
 
 class _ClientPageState extends State<ClientPage> {
+  String _selectedFilter = 'All';
+  TextEditingController _searchController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<Map<String, dynamic>>>(
@@ -28,6 +31,57 @@ class _ClientPageState extends State<ClientPage> {
                 fontSize: 30,
                 fontWeight: FontWeight.w500,
               ))),
+              SizedBox(height: 20,),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _searchController,
+                      textAlignVertical: TextAlignVertical.bottom,
+                      keyboardType: TextInputType.name,
+                      style: const TextStyle(color: Colors.black),
+                      decoration:  InputDecoration(
+                        fillColor:  Color(0XFF909300).withOpacity(0.2),
+                        filled: true,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                          const BorderSide(width: 1, color: Colors.white), //<-- SEE HERE
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        hintText: 'Search...',
+                        focusedBorder:OutlineInputBorder(
+                          borderSide: const BorderSide(color: Colors.white, width: 1.0),
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                        suffixIcon: Padding(
+                          padding: const EdgeInsets.only(right:20),
+                          child: DropdownButton<String>(
+                            value: _selectedFilter,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedFilter = newValue!;
+                              });
+                            },
+                            items: <String>['All', 'Option 1', 'Option 2', 'Option 3']
+                                .map<DropdownMenuItem<String>>(
+                                  (String value) => DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              ),
+                            )
+                                .toList(),
+                          ),
+                        ),
+                      ),
+
+                    ),
+                  ),
+                  SizedBox(width: 10),
+
+                ],
+              ),
+              SizedBox(height: 20,),
+
               DataTable(
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0XFF909300), width: 2,), // Table border color
