@@ -17,7 +17,7 @@ import '../model/MultipleChoiceOption.dart';
 import '../model/Status.dart';
 
 class FormApi{
-  static const String url = 'http://api.sebsabi.b.gebeyalearning.com/:8080';
+  static const String url = 'http://api.sebsabi.b.gebeyalearning.com';
 
   static Future<Map<String, dynamic>> updateForm(int formId, String? title,String? description,int? usageLimit, Status? status ) async {
     final token=html.window.localStorage['auth_token'];
