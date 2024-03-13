@@ -1,8 +1,9 @@
 enum Status {
   Active,
-  Inactive,
+  InActive,
   Draft,
   Claimed,
   Completed,
   Posted
 }
+

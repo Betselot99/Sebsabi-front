@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sebsabi/api/Admin_Api.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sebsabi/model/Status.dart';
 
 class ClientPage extends StatefulWidget {
   const ClientPage({super.key});
@@ -26,11 +27,16 @@ class _ClientPageState extends State<ClientPage> {
           // Display the list of clients
           return ListView(
             children: [
-              Text("Clients List", style: GoogleFonts.poppins(textStyle: const TextStyle(
-                color: Color(0XFF909300),
-                fontSize: 30,
-                fontWeight: FontWeight.w500,
-              ))),
+              Row(
+                children: [
+                  Text("Clients List", style: GoogleFonts.poppins(textStyle: const TextStyle(
+                    color: Color(0XFF909300),
+                    fontSize: 30,
+                    fontWeight: FontWeight.w500,
+                  ))),
+
+                ],
+              ),
               SizedBox(height: 20,),
               Row(
                 children: [
@@ -99,8 +105,23 @@ class _ClientPageState extends State<ClientPage> {
                     DataCell(Text('${snapshot.data![index]['isActive']}')),
                     DataCell(
                       ElevatedButton(
-                        onPressed: () {
-                          // Handle view proposal button click
+                        onPressed: () async{
+                          try {
+                            print(snapshot.data![index]['id']);
+                            final response = await AdminApi.updateStatusClient(snapshot.data![index]['id'], {'isActive': snapshot.data![index]['isActive']=='Active'? Status.InActive?.toString().split('.').last : Status.Active?.toString().split('.').last});
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('User deactivated'),));
+                            setState(() {
+                              AdminApi.fetchClients();
+                            });
+                            print(response);
+                          } catch (e) {
+
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem'),));
+                            setState(() {
+                              AdminApi.fetchClients();
+                            });
+                            print('Error: $e');
+                          }
                         },
                         child: Text('Change Status'),
                       ),

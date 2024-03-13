@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sebsabi/api/Form_Api.dart';
 import 'package:sebsabi/model/Status.dart';
+import 'package:sebsabi/ui/home.dart';
+import 'package:sebsabi/ui/myforms.dart';
 import 'package:sebsabi/ui/widgets/description_card.dart';
 import 'package:sebsabi/ui/widgets/pagesnavbar.dart';
 import 'package:sebsabi/ui/widgets/question_card.dart';
@@ -41,12 +43,16 @@ class _DraftsState extends State<Drafts> {
       }
 
       return {
+        'id':question['id'],
         'question': question['questionText'], // Assuming 'questionText' is the correct property name
         'type': question['questionType'], // Assuming 'questionType' is the correct property name
         'choices': choices, // Extracted optionText values
         'rate': question['ratingScale'] // Assuming 'ratingScale' is the correct property name
       };
     }).toList();
+
+   title=widget.formTitle;
+   description=widget.formDescription;
 
   }
 
@@ -103,6 +109,7 @@ class _DraftsState extends State<Drafts> {
   List<String?> choices =[];
   int rate=0;
    List<Map<String, dynamic>> dataList = [];
+  TextEditingController usageLimitController = TextEditingController();
 
 // Add an item to the dataList
   void addItemToDataList(String question, String type, int index, List<String?> choices, int rate) {
@@ -192,9 +199,15 @@ class _DraftsState extends State<Drafts> {
                                     widget.id, title, description, 10,
                                     Status.Draft);
                                 if(response.isNotEmpty){
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => Home()), // Closing parenthesis added here
+                                        (Route<dynamic> route) => false,
+                                  );
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text(
                                           'Form has been updated '),));
+
 
                                 }else{
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -209,6 +222,7 @@ class _DraftsState extends State<Drafts> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text(
                                         'Please fill out Questions'),));
+
                               }else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(content: Text(
@@ -221,23 +235,59 @@ class _DraftsState extends State<Drafts> {
                         const SizedBox(width:20),
                         ElevatedButton(
                           onPressed: ()async{
-                              try {
-                                final response = await FormApi.updateForm(
-                                    widget.id, title, description, 10,
-                                    Status.Posted);
-                                if(response.isNotEmpty){
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text(
-                                          'Form has been updated '),));
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text('Collection Limit'),
+                                  content: TextField(
+                                    controller: usageLimitController,
+                                    decoration: InputDecoration(
+                                      hintText: 'Please enter how many people you want to collect from.',
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () async{
+                                        try {
+                                          final response = await FormApi.updateForm(
+                                              widget.id, title, description, int.parse(usageLimitController.text),
+                                              Status.Posted);
+                                          if(response.isNotEmpty){
+                                            Navigator.of(context).pop();
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(content: Text(
+                                                    'Form has been updated '),));
+                                            setState(() {
+                                              initState();
+                                            });
 
-                                }else{
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text(
-                                          'Form has not been updated '),));
-                                }
-                              }catch(e){
-                                print(e);
-                              }
+
+                                          }else{
+                                            Navigator.of(context).pop();
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(content: Text(
+                                                    'Form has not been updated '),));
+                                          }
+                                        }catch(e){
+                                          print(e);
+                                        }
+                                        
+                                      },
+                                      child: Text('Save'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        // Close the dialog without saving
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                             
 
                           },
                           child: const Text('Post as Job'),

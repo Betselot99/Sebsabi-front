@@ -141,23 +141,21 @@ class _ProfileState extends State<Profile> {
                         TextFormField(
                           controller: emailController,
                           textAlignVertical: TextAlignVertical.bottom,
-                          minLines: 1, // Set this
-                          maxLines: 1, // and this
+                          minLines: 1,
+                          maxLines: 1,
                           keyboardType: TextInputType.multiline,
                           style: const TextStyle(color: Colors.black),
-                          decoration:  InputDecoration(
-                            fillColor:  Colors.white,
+                          readOnly: true, // Set this to make it uneditable
+                          decoration: InputDecoration(
+                            fillColor: Colors.white,
                             filled: true,
                             enabledBorder: OutlineInputBorder(
-                              borderSide:
-                              const BorderSide(width: 1, color: Colors.white), //<-- SEE HERE
+                              borderSide: const BorderSide(width: 1, color: Colors.white),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             hintText: 'Email',
-
-                            focusedBorder:OutlineInputBorder(
+                            focusedBorder: OutlineInputBorder(
                               borderSide: const BorderSide(color: Colors.white, width: 1.0),
-
                             ),
                           ),
                         ),
@@ -305,7 +303,6 @@ class _ProfileState extends State<Profile> {
                               final clientRequest={
                                 'firstName':fnameController.text,
                                 'lastName':lnameController.text,
-                                'email':emailController.text,
                                 'companyName':companyNameController.text,
                                 'companyType':companyTypeController.text,
                                 'occupation':occupationController.text,
@@ -313,17 +310,16 @@ class _ProfileState extends State<Profile> {
                               };
                               try{
                                 ClientApi.UpdateClient(clientRequest);
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                                  content: Text('Profile has been updated'),));
-                                setState(() {
-                                  checkForProfile();
-                                });
-
-
                               }catch(e){
                                 print(e);
                                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                                   content: Text('Something seems to be wrong, try again.'),));
+                              }finally{
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                                  content: Text('Profile has been updated'),));
+                                setState(() {
+                                  //initState();
+                                });
                               }
                             },
                             child: const Text('Save changes'),
@@ -337,7 +333,19 @@ class _ProfileState extends State<Profile> {
                 ),
               )
           ),
+
         ),
+        SizedBox(height: 50),
+        Text("Your Walet", style: GoogleFonts.poppins(textStyle: const TextStyle(
+          color:  Color(0XFF909300),
+          fontSize: 20,
+          fontWeight: FontWeight.w500,
+        ))),
+        Text("Manage payments and financial resources.", style: GoogleFonts.poppins(textStyle: const TextStyle(
+          color:  Colors.black,
+          fontSize: 13,
+        ))),
+        SizedBox(height: 50),
       ],
     );
   }

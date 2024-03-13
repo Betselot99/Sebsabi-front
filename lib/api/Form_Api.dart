@@ -17,7 +17,7 @@ import '../model/MultipleChoiceOption.dart';
 import '../model/Status.dart';
 
 class FormApi{
-  static const String url = 'http://localhost:8080';
+  static const String url = 'http://api.sebsabi.b.gebeyalearning.com';
 
   static Future<Map<String, dynamic>> updateForm(int formId, String? title,String? description,int? usageLimit, Status? status ) async {
     final token=html.window.localStorage['auth_token'];
@@ -92,6 +92,7 @@ class FormApi{
     List<FormQuestion> questionList = [formQuestion];
 
     // Send the request to the API
+    try{
     final response = await http.post(
       addQuestionUrl,
       headers: {
@@ -101,11 +102,13 @@ class FormApi{
       body: jsonEncode(questionList),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       // Handle the success case
     } else {
       print(response.statusCode);
-      throw Exception(response.body);
+      throw Exception();
+    }}catch(e){
+      print(e);
     }
   }
 
