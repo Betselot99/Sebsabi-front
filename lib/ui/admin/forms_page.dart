@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:sebsabi/api/Admin_Api.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sebsabi/model/Status.dart';
 
-import '../../model/Status.dart';
-
-class WorkerPage extends StatefulWidget {
-  const WorkerPage({super.key});
+class FormsPage extends StatefulWidget {
+  const FormsPage({Key? key}) : super(key: key);
 
   @override
-  State<WorkerPage> createState() => _WorkerPageState();
+  State<FormsPage> createState() => _FormsPageState();
 }
 
-class _WorkerPageState extends State<WorkerPage> {
-  late Future<List<dynamic>> futureWorkers;
+class _FormsPageState extends State<FormsPage> {
+  late Future<List<dynamic>> futureForms;
   String _selectedFilter = 'All';
   TextEditingController _searchController = TextEditingController();
 
@@ -23,27 +22,28 @@ class _WorkerPageState extends State<WorkerPage> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    futureWorkers = AdminApi.searchClients("","", 0);
+    futureForms = AdminApi.searchForms("", 0);
+
   }
-  void searchWorkers() {
+  void searchForms() {
     String searchText = _searchController.text;
     setState(() {
-      futureWorkers = AdminApi.searchClients("",searchText, 0);
+      futureForms = AdminApi.searchForms(searchText, 0);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<dynamic>>(
-      future: futureWorkers,
+      future: futureForms,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          final clients = snapshot.data!;
-          final rowsPerPage = clients.length < 10 ? clients.length == 0 ? 1:clients.length : PaginatedDataTable.defaultRowsPerPage;
+          final forms = snapshot.data!;
+          final rowsPerPage = forms.length < 10 ? forms.length == 0 ? 1:forms.length : PaginatedDataTable.defaultRowsPerPage;
 
           return SingleChildScrollView(
             child: Container(
@@ -53,7 +53,7 @@ class _WorkerPageState extends State<WorkerPage> {
                 children: [
                   Row(
                     children: [
-                      Text("Workers List", style: GoogleFonts.poppins(textStyle: const TextStyle(
+                      Text("Forms List", style: GoogleFonts.poppins(textStyle: const TextStyle(
                         color: Color(0XFF909300),
                         fontSize: 30,
                         fontWeight: FontWeight.w500,
@@ -63,7 +63,7 @@ class _WorkerPageState extends State<WorkerPage> {
                         onPressed: () {
                           setState(() {
 
-                            searchWorkers();
+                            searchForms();
                           });
 
                           print('Reload button pressed');
@@ -79,7 +79,7 @@ class _WorkerPageState extends State<WorkerPage> {
                           onEditingComplete: () {
                             setState(() {
                               print(_searchController.text);
-                              searchWorkers();
+                              searchForms();
                             });
 
                             // You can put your logic here
@@ -110,7 +110,7 @@ class _WorkerPageState extends State<WorkerPage> {
                                     _selectedFilter = newValue!;
                                   });
                                 },
-                                items: <String>['All', 'By First Name', 'By Last Name']
+                                items: <String>['All', 'By Title', ]
                                     .map<DropdownMenuItem<String>>(
                                       (String value) => DropdownMenuItem<String>(
                                     value: value,
@@ -131,23 +131,29 @@ class _WorkerPageState extends State<WorkerPage> {
                   PaginatedDataTable(
                     columns: [
                       DataColumn(
-                        label: Text('First Name'),
+                        label: Text('title'),
                         onSort: (columnIndex, ascending) {
                           setState(() {
                             _sortColumnIndex = columnIndex;
                             _sortAscending = ascending;
-                            clients.sort((a, b) => a['firstName'].compareTo(b['firstName']));
+                            forms.sort((a, b) => a['title'].compareTo(b['title']));
                             if (!_sortAscending) {
-                              clients.reversed.toList();
+                              forms.reversed.toList();
                             }
                           });
                         },
                       ),
-                      DataColumn(label: Text('Last Name')),
-                      DataColumn(label: Text('isActive')),
-                      DataColumn(label: Text('Change Status')),
+                      DataColumn(label: Text('description')),
+                      DataColumn(label: Text('Limit')),
+                      DataColumn(label: Text('Status')),
+                      DataColumn(label: Text('Number of Questions')),
+                      DataColumn(label: Text('Number of Responses')),
+                      DataColumn(label: Text('Number of proposals')),
+                      DataColumn(label: Text('Assigned')),
+
+
                     ],
-                    source: _DataSource(context, clients),
+                    source: _DataSource(context, forms),
                     rowsPerPage: rowsPerPage,
                     sortColumnIndex: _sortColumnIndex,
                     sortAscending: _sortAscending,
@@ -166,36 +172,23 @@ class _WorkerPageState extends State<WorkerPage> {
 
 class _DataSource extends DataTableSource {
   final BuildContext context;
-  final List<dynamic> workers;
+  final List<dynamic> clients;
 
-  _DataSource(this.context, this.workers);
+  _DataSource(this.context, this.clients);
 
   @override
   DataRow? getRow(int index) {
-    if (index >= workers.length) return null;
-    final worker = workers[index];
+    if (index >= clients.length) return null;
+    final client = clients[index];
     return DataRow(cells: [
-      DataCell(Text(worker['firstName'])),
-      DataCell(Text(worker['lastName'])),
-      DataCell(Text('${worker['isActive']}')),
-      DataCell(ElevatedButton(
-        onPressed: () async {
-          try {
-            print(worker['id']);
-            final response = await AdminApi.updateStatusWorker(worker['id'], {
-              'isActive': worker['isActive'] == 'Active'
-                  ? Status.InActive.toString().split('.').last
-                  : Status.Active?.toString().split('.').last
-            });
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('User deactivated')));
-            print(response);
-          } catch (e) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('There seems to be a problem')));
-            print('Error: $e');
-          }
-        },
-        child: Text('Change Status'),
-      )),
+      DataCell(Text(client['title'])),
+      DataCell(Text(client['description'])),
+      DataCell(Text('${client['usageLimit']}')),
+      DataCell(Text('${client['status']}')),
+      DataCell(Text('${client['questions'].length}')),
+      DataCell(Text('${client['userResponses'].length}')),
+      DataCell(Text('${client['proposals'].length}')),
+      DataCell(Text(client['assignedGigWorker']== null ? "No":"Yes")),
     ]);
   }
 
@@ -203,7 +196,7 @@ class _DataSource extends DataTableSource {
   bool get isRowCountApproximate => false;
 
   @override
-  int get rowCount => workers.length;
+  int get rowCount => clients.length;
 
   @override
   int get selectedRowCount => 0;

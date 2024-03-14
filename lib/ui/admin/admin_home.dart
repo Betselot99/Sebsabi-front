@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sebsabi/ui/admin/client_page.dart';
+import 'package:sebsabi/ui/admin/forms_page.dart';
 import 'package:sebsabi/ui/admin/site_analytics.dart';
 import 'package:sebsabi/ui/admin/workers_page.dart';
 import 'package:sebsabi/ui/completedforms.dart';
@@ -28,6 +29,10 @@ class _AdminHomeState extends State<AdminHome> {
   List<Widget> views = [
     Padding(
       padding: const EdgeInsets.only(top: 50, left: 100,right:100),
+      child: SiteAnalytics(),
+    ),
+    Padding(
+      padding: const EdgeInsets.only(top: 50, left: 100,right:100),
       child: ClientPage(),
     ),
     Padding(
@@ -35,15 +40,20 @@ class _AdminHomeState extends State<AdminHome> {
       child: WorkerPage(),
     ),
     Padding(
-      padding: const EdgeInsets.only(top: 50, left: 100,right:100),
-      child: SiteAnalytics(),
+      padding: const EdgeInsets.only(top: 50, left: 80,right:80),
+      child: FormsPage(),
     ),
+
 
   ];
 
   List<Widget> pages = [
     Padding(
       padding: const EdgeInsets.all(10.0),
+      child: SiteAnalytics(),
+    ),
+    Padding(
+      padding: const EdgeInsets.all(10.0),
       child: ClientPage(),
     ),
     Padding(
@@ -52,8 +62,9 @@ class _AdminHomeState extends State<AdminHome> {
     ),
     Padding(
       padding: const EdgeInsets.all(10.0),
-      child: SiteAnalytics(),
+      child: FormsPage(),
     ),
+
   ];
   int selectedIndex = 0;
 
@@ -85,11 +96,15 @@ class _AdminHomeState extends State<AdminHome> {
     String textToShow;
 
     if (selectedIndex == 0) {
-      textToShow = "Client List";
-    } else if (selectedIndex == 1) {
-      textToShow = "Workers List";
-    } else if (selectedIndex == 2) {
       textToShow = "Site analytics";
+
+    } else if (selectedIndex == 1) {
+      textToShow = "Client List";
+
+    } else if (selectedIndex == 2) {
+      textToShow = "Workers List";
+    }else if(selectedIndex == 3){
+      textToShow = "Forms List";
     }else {
       textToShow = "Sebsabi";
     }
@@ -141,26 +156,34 @@ class _AdminHomeState extends State<AdminHome> {
               },
             ),
             ListTile(
-              title: const Text('Client List'),
+              title: const Text('Site Analytics'),
               onTap: () {
                 _selectPage(0);
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
-              title: const Text('Worker List'),
+              title: const Text('Client List'),
               onTap: () {
                 _selectPage(1);
                 Navigator.pop(context); // Close the drawer
               },
             ),
             ListTile(
-              title: const Text('Site Analytics'),
+              title: const Text('Worker List'),
               onTap: () {
                 _selectPage(2);
                 Navigator.pop(context); // Close the drawer
               },
             ),
+            ListTile(
+              title: const Text('Forms List'),
+              onTap: () {
+                _selectPage(3);
+                Navigator.pop(context); // Close the drawer
+              },
+            ),
+
 
           ],
         ),
@@ -245,15 +268,21 @@ class _AdminHomeState extends State<AdminHome> {
                 items: const [
                   SideNavigationBarItem(
                     icon: Icons.post_add_sharp,
-                    label: 'Client List',
+                    label: 'Site Analytics',
+
                   ),
                   SideNavigationBarItem(
                     icon: Icons.my_library_books_rounded,
-                    label: 'Workers List',
+                    label: 'Client List',
+
                   ),
                   SideNavigationBarItem(
                     icon: Icons.fact_check,
-                    label: 'Site Analytics',
+                    label: 'Workers List',
+                  ),
+                  SideNavigationBarItem(
+                    icon: Icons.list,
+                    label: 'Forms List',
                   ),
 
                 ],

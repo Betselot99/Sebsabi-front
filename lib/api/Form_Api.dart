@@ -194,7 +194,7 @@ class FormApi{
 
   static Future<int> getClientJobStatus(int formId) async {
     final token=html.window.localStorage['auth_token'];
-    final proggressUrl = Uri.parse('$url/api/core/client/view/form/status/claimed?formId=$formId');
+    final proggressUrl = Uri.parse('$url/api/core/client/view/form/progress/$formId');
 
     try {
       final response = await http.get(proggressUrl, headers: {
