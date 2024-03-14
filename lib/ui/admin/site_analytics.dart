@@ -24,6 +24,23 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
   late Future<num> formPerWorker;
   late Future<List<Map<String, dynamic>>> formsByStatus;
   late List<ChartData> chartData=[];
+  late Future<num> balance;
+
+
+  List<ChartData> data = [
+    ChartData("Jan", 35),
+    ChartData("Feb", 42),
+    ChartData("Mar", 21),
+    ChartData("Apr", 63),
+    ChartData("May", 18),
+    ChartData("Jun", 50),
+    ChartData("Jul", 77),
+    ChartData("Aug", 28),
+    ChartData("Sep", 45),
+    ChartData("Oct", 36),
+    ChartData("Nov", 55),
+    ChartData("Dec", 68),
+  ];
 
   @override
   void initState() {
@@ -37,7 +54,7 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
     setState(() {
       la();
     });
-
+    balance = Future<num>.value(2000);
 
 
 
@@ -69,6 +86,22 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
           fontSize: 30,
           fontWeight: FontWeight.w500,
         ))),
+        Center(
+          child: Container(
+            child: SfCartesianChart(
+                primaryXAxis: CategoryAxis(),
+                series: <CartesianSeries>[
+                  // Renders line chart
+                  LineSeries<ChartData, String>(
+                      dataSource: data,
+                      xValueMapper: (ChartData data, _) => data.x,
+                      yValueMapper: (ChartData data, _) => data.y,
+                      color:Color(0XFF909300),
+                  )
+                ]
+            ),
+          ),
+        ),
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -125,7 +158,77 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
               ),
             ),
           ],
-        )
+        ),
+        SizedBox(height: 40),
+        Text("Walet", style: GoogleFonts.poppins(textStyle: const TextStyle(
+          color: Color(0XFF909300),
+          fontSize: 30,
+          fontWeight: FontWeight.w500,
+        ))),
+        SizedBox(height: 40),
+        buildCard("Balance", balance),
+        SizedBox(height: 40),
+        Text("Transaction", style: GoogleFonts.poppins(textStyle: const TextStyle(
+          color: Color(0XFF909300),
+          fontSize: 30,
+          fontWeight: FontWeight.w500,
+        ))),
+        DataTable(columns: <DataColumn>[
+          DataColumn(
+            label: Text('Payment'),
+          ),
+          DataColumn(
+            label: Text('From Form'),
+          ),
+          DataColumn(
+            label: Text('Client'),
+          ),
+          DataColumn(
+            label: Text('Gig Worker'),
+          ),
+        ], rows: <DataRow>[
+          DataRow(
+            cells: <DataCell>[
+              DataCell(Text('Transaction 1')),
+              DataCell(Text('From Form 1')),
+              DataCell(Text('Client 1')),
+              DataCell(Text('Gig Worker 1')),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              DataCell(Text('Transaction 2')),
+              DataCell(Text('From Form 2')),
+              DataCell(Text('Client 2')),
+              DataCell(Text('Gig Worker 2')),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              DataCell(Text('Transaction 3')),
+              DataCell(Text('From Form 3')),
+              DataCell(Text('Client 3')),
+              DataCell(Text('Gig Worker 3')),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              DataCell(Text('Transaction 4')),
+              DataCell(Text('From Form 4')),
+              DataCell(Text('Client 4')),
+              DataCell(Text('Gig Worker 4')),
+            ],
+          ),
+          DataRow(
+            cells: <DataCell>[
+              DataCell(Text('Transaction 5')),
+              DataCell(Text('From Form 5')),
+              DataCell(Text('Client 5')),
+              DataCell(Text('Gig Worker 5')),
+            ],
+          ),
+        ],)
+        
       ],
     );
   }
@@ -147,7 +250,7 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
               title,
     style: GoogleFonts.poppins(textStyle: const TextStyle(
     color:  Color(0XFFC8C8C8),
-    fontSize: 18,
+    fontSize: 15,
             ),)),
             SizedBox(height: 8.0),
             FutureBuilder<num>(
@@ -159,10 +262,10 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
                   return Text("Error: ${snapshot.error}");
                 } else {
                   return Text(
-                    "${snapshot.data}",
+                    title=='Balance'?"${snapshot.data} ETB":"${snapshot.data}",
                     style: GoogleFonts.poppins(textStyle: const TextStyle(
                       color:   Color(0XFF909300),
-                      fontSize: 50,
+                      fontSize: 18,
                     ),),
                   );
                 }

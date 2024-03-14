@@ -17,7 +17,7 @@ import '../model/MultipleChoiceOption.dart';
 import '../model/Status.dart';
 
 class FormApi{
-  static const String url = 'http://api.sebsabi.b.gebeyalearning.com';
+  static const String url = 'http://localhost:8080';
 
   static Future<Map<String, dynamic>> updateForm(int formId, String? title,String? description,int? usageLimit, Status? status ) async {
     final token=html.window.localStorage['auth_token'];
@@ -194,7 +194,7 @@ class FormApi{
 
   static Future<int> getClientJobStatus(int formId) async {
     final token=html.window.localStorage['auth_token'];
-    final proggressUrl = Uri.parse('$url/api/core/client/view/form/status/claimed?formId=$formId');
+    final proggressUrl = Uri.parse('$url/api/core/client/view/form/progress/$formId');
 
     try {
       final response = await http.get(proggressUrl, headers: {

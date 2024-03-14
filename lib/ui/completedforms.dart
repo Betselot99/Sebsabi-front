@@ -28,21 +28,17 @@ class _CompletedFormsState extends State<CompletedForms> {
     checkForForm();
   }
 
-  late Future<List<FormResponse>> forms;
+  late Future<List<Map<String, dynamic>>> forms;
   late bool formAvailable= false;
-  late List<FormResponse> formsList;
+  late List<Map<String,dynamic>> formsList;
 
 
   Future<void> checkForForm() async {
-    //forms = FormApi.fetchForms(Status.Completed);
-    //print(forms);
+    forms = FormApi.fetchForms(Status.Completed);
+    print(forms);
     formsList = await forms;
     for (var form in formsList) {
-      print("Form ID: ${form.id}");
-      print("Title: ${form.title}");
-      print("Description: ${form.description}");
-      print("Usage Limit: ${form.usageLimit}");
-      print("Status: ${form.status}");}
+      }
     if (formsList.isEmpty) {
       setState(() {
         formAvailable=false;
@@ -78,7 +74,7 @@ class _CompletedFormsState extends State<CompletedForms> {
                 Wrap(
                   children: List.generate(
                     formsList.length, // Adjust the number of items as needed
-                        (index) =>  FormsCard(formStatus:formsList[index].status.toString(), title: formsList[index].title, description: formsList[index].description, claimed: false, proposalNo: 0,),
+                        (index) =>  FormsCard(formStatus:formsList[index]['status'], title: formsList[index]['title'], description: formsList[index]['description'], claimed: false, proposalNo: 0,),
                   ),
                 ),
 

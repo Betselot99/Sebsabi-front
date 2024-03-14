@@ -7,7 +7,7 @@ import 'package:sebsabi/model/ClientAuthRequest.dart';
 import 'dart:html' as html;
 
 class ClientApi{
-  static const String url = 'http://api.sebsabi.b.gebeyalearning.com';
+  static const String url = 'http://localhost:8080';
 
   static Future<String?> loginClient(String username,String password) async {
     final loginUrl = Uri.parse('$url/api/auth/login');// Replace 'your_api_url_here' with your actual API endpoint
