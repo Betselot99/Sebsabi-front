@@ -68,6 +68,7 @@ class _CreateFormState extends State<CreateForm> {
   List<String?> choices =[];
   int rate=0;
   final List<Map<String, dynamic>> dataList = [];
+  TextEditingController usageLimitController = TextEditingController();
 
 // Add an item to the dataList
   void addItemToDataList(String question, String type, int index, List<String?> choices, int rate) {
@@ -186,45 +187,77 @@ class _CreateFormState extends State<CreateForm> {
                           ),
                           const SizedBox(width:20),
                           ElevatedButton(
-                            onPressed: ()async{
-                              if(title.isNotEmpty && description.isNotEmpty && _titleError == null && _descriptionError == null && question.isNotEmpty ){
-                              try{
+                            onPressed: () async{
 
-                                int? formId= await FormApi.createForm(title, description, 10,Status.Posted);
-                                print(formId);
-                                try {
-                                  for (Map<String, dynamic> questionData in dataList) {
-                                    final questionText = questionData['question'];
-                                    final questionType = questionData['type'];
-                                    final multipleChoiceOptions = questionData['choices'];
-                                    final ratingScale = questionData['rate'];
-                                    await FormApi.addQuestionToForm(formId, questionText, questionType,multipleChoiceOptions, ratingScale);
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Collection Limit'),
+                                    content: TextField(
+                                      controller: usageLimitController,
+                                      decoration: InputDecoration(
+                                        hintText: 'Please enter how many people you want to collect from.',
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () async{
+                                          // Close the dialog and do something with the entered password
+                                          if(title.isNotEmpty && description.isNotEmpty && _titleError == null && _descriptionError == null && question.isNotEmpty ){
+                                            try{
 
-                                  }
-                                } catch (e) {
-                                  // Handle the exception, show an error message, etc.
-                                  print('Error: $e');
-                                }
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Form has been created'),));
+                                              int? formId= await FormApi.createForm(title, description, int.parse(usageLimitController.text),Status.Posted);
+                                              print(formId);
+                                              try {
+                                                for (Map<String, dynamic> questionData in dataList) {
+                                                  final questionText = questionData['question'];
+                                                  final questionType = questionData['type'];
+                                                  final multipleChoiceOptions = questionData['choices'];
+                                                  final ratingScale = questionData['rate'];
+                                                  await FormApi.addQuestionToForm(formId, questionText, questionType,multipleChoiceOptions, ratingScale);
 
-                                Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => Home()));
+                                                }
+                                              } catch (e) {
+                                                // Handle the exception, show an error message, etc.
+                                                print('Error: $e');
+                                              }
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Form has been created'),));
 
-                              }catch(e){
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem please try agian'),));
-                              }
-                              }else{
-                                if(question.isEmpty) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text(
-                                          'Please fill out Questions'),));
-                                }else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text(
-                                          'Please fill out Description and Title '),));
-                                }
-    }
+                                              Navigator.pushReplacement(
+                                                  context,
+                                                  MaterialPageRoute(builder: (context) => Home()));
+
+                                            }catch(e){
+                                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem please try agian'),));
+                                            }
+                                          }else{
+                                            if(question.isEmpty) {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                  const SnackBar(content: Text(
+                                                      'Please fill out Questions'),));
+                                            }else {
+                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                  const SnackBar(content: Text(
+                                                      'Please fill out Description and Title '),));
+                                            }
+                                          }
+
+                                        },
+                                        child: Text('Save'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          // Close the dialog without saving
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text('Cancel'),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+
                             },
                             child: const Text('Post as Job'),
                           ),

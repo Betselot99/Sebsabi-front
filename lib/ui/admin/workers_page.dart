@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sebsabi/api/Admin_Api.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../model/Status.dart';
+
 class WorkerPage extends StatefulWidget {
   const WorkerPage({super.key});
 
@@ -99,7 +101,23 @@ class _WorkerPageState extends State<WorkerPage> {
                       DataCell(Text('${snapshot.data![index]['isActive']}')),
                       DataCell(
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async{
+                            try {
+                              print(snapshot.data![index]['id']);
+                              final response = await AdminApi.updateStatusWorker(snapshot.data![index]['id'], {'isActive': snapshot.data![index]['isActive']=='Active'? Status.InActive?.toString().split('.').last : Status.Active?.toString().split('.').last});
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('User deactivated'),));
+                              setState(() {
+                                AdminApi.fetchWorkers();
+                              });
+                              print(response);
+                            } catch (e) {
+
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem'),));
+                              setState(() {
+                                AdminApi.fetchWorkers();
+                              });
+                              print('Error: $e');
+                            }
                             // Handle view proposal button click
                           },
                           child: Text('Change Status'),

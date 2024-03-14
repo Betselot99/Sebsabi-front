@@ -1,4 +1,10 @@
+
+
 import 'package:flutter/material.dart';
+import 'package:sebsabi/api/Admin_Api.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 
 
@@ -11,34 +17,171 @@ class SiteAnalytics extends StatefulWidget {
 }
 
 class _SiteAnalyticsState extends State<SiteAnalytics> {
+  late Future<int> numberOfClients;
+  late Future<int> numberOfWorkers;
+  late Future<num> formsPerClient;
+  late Future<num> proposalPerForm;
+  late Future<num> formPerWorker;
+  late Future<List<Map<String, dynamic>>> formsByStatus;
+  late List<ChartData> chartData=[];
+
+  @override
+  void initState() {
+    super.initState();
+    numberOfClients = AdminApi.fetchNumberofClients();
+    numberOfWorkers= AdminApi.fetchNumberofGigWorkers();
+    formsPerClient = AdminApi.formsPerClient();
+    proposalPerForm = AdminApi.proposalsPerClient();
+    formPerWorker =AdminApi.formsAssignedPerWorker();
+    formsByStatus = AdminApi.countByStatus();
+    setState(() {
+      la();
+    });
+
+
+
+
+
+  }
+
+  void la() async{
+      List<Map<String, dynamic>> fin= await AdminApi.countByStatus();
+      setState(() {
+        chartData = fin.map((data){
+          return ChartData(
+            data['status'] as String,
+            data['count'] as double,
+          );
+        }).toList();
+      });
+
+      print("chart data: $chartData");
+    }
+
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.95,
-        height: MediaQuery.of(context).size.width * 0.95 * 0.65,
-        padding: EdgeInsets.fromLTRB(0, 10, 20, 10),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              "bar chart",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-                child: Container(
 
-                ))
+    return ListView(
+      children: [
+        Text("Site Analysis", style: GoogleFonts.poppins(textStyle: const TextStyle(
+          color: Color(0XFF909300),
+          fontSize: 30,
+          fontWeight: FontWeight.w500,
+        ))),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buildCard("Number of Clients", numberOfClients),
+                  buildCard("Number of Gig-Workers", numberOfWorkers),
+                  buildCard("Forms per Client", formsPerClient),
+                  // Add more cards with other API calls as needed
+                ],
+              ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              buildCard("Proposal per Form", proposalPerForm),
+              buildCard("Forms Assigned Per Gig-Worker", formPerWorker),
+            ]),
+            ],
+          ),
+        ),Column(
+
+          children: [
+            Text("Forms per Status", style: GoogleFonts.poppins(textStyle: const TextStyle(
+              color: Color(0XFF909300),
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+            ))),
+            Container(
+
+              child: SfCartesianChart(
+                primaryXAxis: CategoryAxis(),
+                series: <CartesianSeries<ChartData, String>>[
+                  // Renders a single column chart with different colors for each bar
+                  ColumnSeries<ChartData, String>(
+                    dataSource: chartData,
+                    xValueMapper: (ChartData data, _) => data.x,
+                    yValueMapper: (ChartData data, _) => data.y,
+                    pointColorMapper: (ChartData data, _) {
+                      // Define colors based on status or any other condition
+                      if (data.x == 'Draft') {
+                        return Colors.redAccent;
+                      } else if (data.x == 'Claimed') {
+                        return Color(0XFF909300);
+                      } else if (data.x == 'Posted') {
+                        return Colors.orange;
+                      }
+                      // Add more cases or provide a default color
+                      return Colors.grey;
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget buildCard(String title, Future<num> data) {
+    return Card(
+      clipBehavior: Clip.hardEdge,
+      surfaceTintColor: Colors.white,
+      color: Colors.white,
+      elevation: 5.0,
+
+      margin: EdgeInsets.all(16.0),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+    style: GoogleFonts.poppins(textStyle: const TextStyle(
+    color:  Color(0XFFC8C8C8),
+    fontSize: 18,
+            ),)),
+            SizedBox(height: 8.0),
+            FutureBuilder<num>(
+              future: data,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else {
+                  return Text(
+                    "${snapshot.data}",
+                    style: GoogleFonts.poppins(textStyle: const TextStyle(
+                      color:   Color(0XFF909300),
+                      fontSize: 50,
+                    ),),
+                  );
+                }
+              },
+            ),
           ],
         ),
       ),
     );
+  }
+}
+class ChartData {
+  final String x;
+  final double y;
+
+  ChartData(this.x, this.y);
+
+  @override
+  String toString() {
+    return 'ChartData(x: $x, y: $y)';
   }
 }

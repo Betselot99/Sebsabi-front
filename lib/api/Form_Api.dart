@@ -92,6 +92,7 @@ class FormApi{
     List<FormQuestion> questionList = [formQuestion];
 
     // Send the request to the API
+    try{
     final response = await http.post(
       addQuestionUrl,
       headers: {
@@ -101,11 +102,13 @@ class FormApi{
       body: jsonEncode(questionList),
     );
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       // Handle the success case
     } else {
       print(response.statusCode);
-      throw Exception(response.body);
+      throw Exception();
+    }}catch(e){
+      print(e);
     }
   }
 
