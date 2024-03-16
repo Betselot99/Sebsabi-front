@@ -45,6 +45,22 @@ class AdminApi{
       throw Exception('Failed to load clients: $e');
     }
   }
+  static  Future<List<dynamic>> searchGigWorker(String by,String searchText, int size) async {
+    final token=html.window.localStorage['auth_token'];
+    final clientUrl = Uri.parse('$url/api/core/admin/view/search/gig-worker?$by=$searchText&size=$size');
+    try {
+      final response = await http.get(clientUrl,headers: {'Authorization': 'Bearer $token'},);
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return data['content'];
+      } else {
+        throw Exception('Failed to load clients');
+      }
+    }catch(e){
+      throw Exception('Failed to load clients: $e');
+    }
+  }
   static  Future<List<dynamic>> searchForms(String title, int size) async {
     final token=html.window.localStorage['auth_token'];
     final clientUrl = Uri.parse('$url/api/core/admin/view/search?title=$title&size=$size');

@@ -217,6 +217,82 @@ class FormApi{
     }
   }
 
+  static Future<dynamic> fetchAnswerAnalysis(int formId) async {
+    final token=html.window.localStorage['auth_token'];
+    final analysisUrl = Uri.parse('$url/api/core/client/view/form/completed/analyze?formId=$formId');
+
+    try{
+    final response = await http.get(
+      analysisUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+
+    if (response.statusCode == 200) {
+
+      final Map<String, dynamic> data = json.decode(response.body);
+      return data['questionAnalysis'];
+    } else {
+      throw Exception('Failed to load answer analysis');
+    }}catch(e){
+      print(e);
+      throw Exception('Failed to load answer analysis $e');
+    }
+  }
+
+  static Future<Map<String, dynamic>> getPaymentInvoice(int formId) async {
+    final token=html.window.localStorage['auth_token'];
+    final analysisUrl = Uri.parse('$url/api/core/client/check/invoice?formId=$formId');
+
+
+    try {
+      final response = await http.get(analysisUrl,headers: {
+        'Authorization': 'Bearer $token'
+      },);
+      if (response.statusCode == 200) {
+        // API call successful, parse the response and return the data
+        return json.decode(response.body);
+      } else {
+        // Handle other status codes or errors
+        throw Exception('Failed to fetch payment invoice.');
+      }
+    } catch (e) {
+      // Handle network or other exceptions
+      throw Exception('Failed to fetch payment invoice. Check your network connection.$e');
+    }
+  }
+
+  static Future<String> giveTestimonialForGigWorker(int formId, int gigWorkerId, String testimonial) async {
+    final token=html.window.localStorage['auth_token'];
+    final testimonialUrl = Uri.parse('$url/api/core/client/view/forms/completed/giveTestimonials?formId=$formId&gigWorkerId=$gigWorkerId');
+
+    final Map<String, dynamic> requestBody = {'testimonial': testimonial};
+
+    try {
+      final response = await http.post(
+       testimonialUrl,
+        headers: {'Content-Type': 'application/json','Authorization': 'Bearer $token'},
+        body: json.encode(requestBody),
+      );
+
+      if (response.statusCode == 201) {
+        // Testimonial submitted successfully
+        return 'Testimonial submitted successfully';
+      } else if (response.statusCode == 403) {
+        // Access denied, handle accordingly
+        throw Exception('Access denied');
+      } else {
+        // Handle other status codes or errors
+        throw Exception('Failed to submit testimonial');
+      }
+    } catch (e) {
+      // Handle network or other exceptions
+      throw Exception('Failed to submit testimonial. Check your network connection.$e');
+    }
+  }
+
 }
 
 

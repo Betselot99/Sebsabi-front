@@ -263,9 +263,9 @@ class _UpdateQuestionCardState extends State<UpdateQuestionCard> {
                     buttonRow(),
                     const SizedBox(height: 10),
                     const SizedBox(height: 30),
-                    Text("$_dataArray"),
-                    Text("${_choiceControllers.length}"),
-                    Text("$_multipleCount")
+                    // Text("$_dataArray"),
+                    // Text("${_choiceControllers.length}"),
+                    // Text("$_multipleCount")
 
                   ],
                   if(type == 'RATING_SCALE')...[

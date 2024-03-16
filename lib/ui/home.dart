@@ -228,7 +228,7 @@ class _HomeState extends State<Home> {
                 ),
                 header:  SideNavigationBarHeader(
                     image: const CircleAvatar(
-                      backgroundImage: AssetImage("logo.png"),
+                      backgroundImage: AssetImage("assets/logo.png"),
                       backgroundColor: Colors.white,
                     ),
                     title: Text("Sebsabi", style: GoogleFonts.poppins(textStyle: const TextStyle(

@@ -130,12 +130,12 @@ class _CreateFormState extends State<CreateForm> {
                         ),
                       ),
                       buttonRow(),
-                      Text("title: ${title.isNotEmpty}"),
-                      Text("description: ${description.isNotEmpty}"),
-                      Text("title error: ${_titleError==null}"),
-                      Text("description error: $_descriptionError"),
-
-                      Text("${dataList.indexed}"),
+                      // Text("title: ${title.isNotEmpty}"),
+                      // Text("description: ${description.isNotEmpty}"),
+                      // Text("title error: ${_titleError==null}"),
+                      // Text("description error: $_descriptionError"),
+                      //
+                      // Text("${dataList.indexed}"),
 
 
                       Row(

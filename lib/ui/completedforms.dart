@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sebsabi/ui/viewCompletedForms.dart';
 import 'package:sebsabi/ui/widgets/forms_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -37,7 +38,9 @@ class _CompletedFormsState extends State<CompletedForms> {
     forms = FormApi.fetchForms(Status.Completed);
     print(forms);
     formsList = await forms;
+
     for (var form in formsList) {
+
       }
     if (formsList.isEmpty) {
       setState(() {
@@ -47,6 +50,7 @@ class _CompletedFormsState extends State<CompletedForms> {
     }else{
       setState(() {
         formAvailable=true;
+        
       });
     }
   }
@@ -74,7 +78,14 @@ class _CompletedFormsState extends State<CompletedForms> {
                 Wrap(
                   children: List.generate(
                     formsList.length, // Adjust the number of items as needed
-                        (index) =>  FormsCard(formStatus:formsList[index]['status'], title: formsList[index]['title'], description: formsList[index]['description'], claimed: false, proposalNo: 0,),
+                        (index) =>  FormsCard(onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>  ViewCompletedForm(formTitle: formsList[index]['title'], formDescription: formsList[index]['description'], usage: formsList[index]['usageLimit'],questions: formsList[index]['questions'], id: formsList[index]['id'], gigWorkerId: formsList[index]['assignedGigWorker']['id'],),
+                            ),
+                          );
+                        }, formStatus:formsList[index]['status'], title: formsList[index]['title'], description: formsList[index]['description'], claimed: false, proposalNo: 0,),
                   ),
                 ),
 

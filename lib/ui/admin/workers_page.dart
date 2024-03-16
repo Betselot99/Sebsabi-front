@@ -23,12 +23,15 @@ class _WorkerPageState extends State<WorkerPage> {
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    futureWorkers = AdminApi.searchClients("","", 0);
+    futureWorkers = AdminApi.searchGigWorker("","", 0);
   }
   void searchWorkers() {
     String searchText = _searchController.text;
     setState(() {
-      futureWorkers = AdminApi.searchClients("",searchText, 0);
+      if(_selectedFilter == "By First Name"){
+      futureWorkers = AdminApi.searchGigWorker("firstName",searchText, 0);}else if(_selectedFilter == "All"){
+      futureWorkers = AdminApi.searchGigWorker("",searchText, 0);}else if(_selectedFilter == "By Last Name"){
+    futureWorkers = AdminApi.searchGigWorker("lastName",searchText, 0);}
     });
   }
 
