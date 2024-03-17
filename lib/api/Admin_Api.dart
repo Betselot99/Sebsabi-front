@@ -319,6 +319,43 @@ class AdminApi{
     }
   }
 
+  static Future<Map<String, dynamic>> fetchBalance() async {
+    final token=html.window.localStorage['auth_token'];
+    final balanceUrl = Uri.parse('$url/api/core/admin/view/check/wallet');
+    try {
+      final response = await http.get(balanceUrl,headers: {'Authorization': 'Bearer $token',
+      }, );
+
+      if (response.statusCode == 200) {
+        print("helooo ${json.decode(response.body)}");
+        return json.decode(response.body);
+      } else {
+        print(response.statusCode);
+        throw Exception('Failed to load balance');
+      }
+    } catch (e) {
+      throw Exception('Failed to load balance. $e');
+    }
+  }
+  static Future<List<dynamic>> getAllPayments() async {
+    final token=html.window.localStorage['auth_token'];
+    final balanceUrl = Uri.parse('$url/api/core/admin/view/payments');
+    try {
+      final response = await http.get(balanceUrl,headers: {'Authorization': 'Bearer $token',
+      }, );
+
+      if (response.statusCode == 200) {
+        print("helooo ${json.decode(response.body)}");
+        return json.decode(response.body);
+      } else {
+        print(response.statusCode);
+        throw Exception('Failed to load balance');
+      }
+    } catch (e) {
+      throw Exception('Failed to load balance. $e');
+    }
+  }
+
 
 
 }

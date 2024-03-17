@@ -25,6 +25,7 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
   late Future<List<Map<String, dynamic>>> formsByStatus;
   late List<ChartData> chartData=[];
   late Future<num> balance;
+  late Future<List<dynamic>> _paymentsFuture;
 
 
   List<ChartData> data = [
@@ -54,11 +55,21 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
     setState(() {
       la();
     });
-    balance = Future<num>.value(2000);
+    balance = _fetchBalance();
+    _paymentsFuture = AdminApi.getAllPayments();
 
 
 
 
+  }
+
+  Future<num> _fetchBalance() async {
+    try {
+      Map<String, dynamic> data = await AdminApi.fetchBalance();
+      return data['amount'];
+    } catch (e) {
+      throw Exception('Error fetching balance $e');
+    }
   }
 
   void la() async{
@@ -160,11 +171,25 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
           ],
         ),
         SizedBox(height: 40),
-        Text("Walet", style: GoogleFonts.poppins(textStyle: const TextStyle(
-          color: Color(0XFF909300),
-          fontSize: 30,
-          fontWeight: FontWeight.w500,
-        ))),
+        Row(
+          children: [
+
+            Text("Walet", style: GoogleFonts.poppins(textStyle: const TextStyle(
+              color: Color(0XFF909300),
+              fontSize: 30,
+              fontWeight: FontWeight.w500,
+            ))),
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () {
+                _fetchBalance();
+
+                print('Reload button pressed');
+              },
+              tooltip: 'Reload',
+            )
+          ],
+        ),
         SizedBox(height: 40),
         buildCard("Balance", balance),
         SizedBox(height: 40),
@@ -173,61 +198,38 @@ class _SiteAnalyticsState extends State<SiteAnalytics> {
           fontSize: 30,
           fontWeight: FontWeight.w500,
         ))),
-        DataTable(columns: <DataColumn>[
-          DataColumn(
-            label: Text('Payment'),
-          ),
-          DataColumn(
-            label: Text('From Form'),
-          ),
-          DataColumn(
-            label: Text('Client'),
-          ),
-          DataColumn(
-            label: Text('Gig Worker'),
-          ),
-        ], rows: <DataRow>[
-          DataRow(
-            cells: <DataCell>[
-              DataCell(Text('Transaction 1')),
-              DataCell(Text('From Form 1')),
-              DataCell(Text('Client 1')),
-              DataCell(Text('Gig Worker 1')),
-            ],
-          ),
-          DataRow(
-            cells: <DataCell>[
-              DataCell(Text('Transaction 2')),
-              DataCell(Text('From Form 2')),
-              DataCell(Text('Client 2')),
-              DataCell(Text('Gig Worker 2')),
-            ],
-          ),
-          DataRow(
-            cells: <DataCell>[
-              DataCell(Text('Transaction 3')),
-              DataCell(Text('From Form 3')),
-              DataCell(Text('Client 3')),
-              DataCell(Text('Gig Worker 3')),
-            ],
-          ),
-          DataRow(
-            cells: <DataCell>[
-              DataCell(Text('Transaction 4')),
-              DataCell(Text('From Form 4')),
-              DataCell(Text('Client 4')),
-              DataCell(Text('Gig Worker 4')),
-            ],
-          ),
-          DataRow(
-            cells: <DataCell>[
-              DataCell(Text('Transaction 5')),
-              DataCell(Text('From Form 5')),
-              DataCell(Text('Client 5')),
-              DataCell(Text('Gig Worker 5')),
-            ],
-          ),
-        ],)
+        FutureBuilder<List<dynamic>>(
+          future: _paymentsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              return DataTable(
+                columns: [
+                  DataColumn(label: Text('ID')),
+                  DataColumn(label: Text('Transaction Number')),
+                  DataColumn(label: Text('Client Amount')),
+                  DataColumn(label: Text('GigWorker Amount')),
+                  DataColumn(label: Text('Admin Commission')),
+
+                ],
+                rows: snapshot.data!
+                    .map((payment) => DataRow(
+                  cells: [
+                    DataCell(Text(payment['id'].toString())),
+                    DataCell(Text(payment['transactionNumber'])),
+                    DataCell(Text(payment['amount'].toString())),
+                    DataCell(Text('${payment['amount']-payment['adminCommission']}')),
+                    DataCell(Text(payment['adminCommission'].toString())),
+                  ],
+                ))
+                    .toList(),
+              );
+            }
+          },
+        ),
         
       ],
     );
