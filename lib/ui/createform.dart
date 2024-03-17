@@ -15,6 +15,8 @@ class CreateForm extends StatefulWidget {
 }
 
 class _CreateFormState extends State<CreateForm> {
+ bool isloading =false;
+ bool loading= false;
 
   int _questionCount=1;
   Widget buttonRow() => Row(
@@ -145,6 +147,9 @@ class _CreateFormState extends State<CreateForm> {
                             onPressed: ()async{
                               if(title.isNotEmpty && description.isNotEmpty && _titleError == null && _descriptionError == null && question.isNotEmpty ){
                                 try{
+                                  setState(() {
+                                    isloading=true;
+                                  });
 
                                   int? formId= await FormApi.createForm(title, description, 10,Status.Draft);
                                   print(formId);
@@ -158,17 +163,24 @@ class _CreateFormState extends State<CreateForm> {
 
                                       await FormApi.addQuestionToForm(formId, questionText, questionType, multipleChoiceOptions,ratingScale);
 
+
                                     }
                                   } catch (e) {
                                     // Handle the exception, show an error message, etc.
                                     print('Error: $e');
                                   }
+                                  setState(() {
+                                    isloading=false;
+                                  });
                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Form saved as draft'),));
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(builder: (context) => Home()));
 
                                 }catch(e){
+                                  setState(() {
+                                    isloading=false;
+                                  });
                                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem please try agian'),));
                                 }
                               }else{
@@ -183,10 +195,16 @@ class _CreateFormState extends State<CreateForm> {
                                 }
                               }
                             },
-                            child: const Text('Save as draft'),
+                            child:  isloading
+                                ? const CircularProgressIndicator(
+                              strokeWidth: 2,  // Adjust the thickness of the indicator
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ) // Show loading indicator if _isLoading is true
+                                : const Text('Save as Draft'),
                           ),
                           const SizedBox(width:20),
                           ElevatedButton(
+
                             onPressed: () async{
 
                               showDialog(
@@ -206,6 +224,9 @@ class _CreateFormState extends State<CreateForm> {
                                           // Close the dialog and do something with the entered password
                                           if(title.isNotEmpty && description.isNotEmpty && _titleError == null && _descriptionError == null && question.isNotEmpty ){
                                             try{
+                                              setState(() {
+                                                loading = true;
+                                              });
 
                                               int? formId= await FormApi.createForm(title, description, int.parse(usageLimitController.text),Status.Posted);
                                               print(formId);
@@ -221,7 +242,13 @@ class _CreateFormState extends State<CreateForm> {
                                               } catch (e) {
                                                 // Handle the exception, show an error message, etc.
                                                 print('Error: $e');
+                                                setState(() {
+                                                  loading = false;
+                                                });
                                               }
+                                              setState(() {
+                                                loading = false;
+                                              });
                                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('Form has been created'),));
 
                                               Navigator.pushReplacement(
@@ -229,6 +256,9 @@ class _CreateFormState extends State<CreateForm> {
                                                   MaterialPageRoute(builder: (context) => Home()));
 
                                             }catch(e){
+                                              setState(() {
+                                                loading = false;
+                                              });
                                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar( content: Text('There seems to be a problem please try agian'),));
                                             }
                                           }else{
@@ -259,8 +289,14 @@ class _CreateFormState extends State<CreateForm> {
                               );
 
                             },
-                            child: const Text('Post as Job'),
+                            child: loading
+                                ? const CircularProgressIndicator(
+                              strokeWidth: 2,  // Adjust the thickness of the indicator
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ) // Show loading indicator if _isLoading is true
+                                : const Text('Post as Job'),
                           ),
+
                           SizedBox(height:50)
                         ],
                       )

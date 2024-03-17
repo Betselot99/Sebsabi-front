@@ -25,6 +25,8 @@ final int id;
 }
 
 class _DraftsState extends State<Drafts> {
+  bool isloading =false;
+  bool loading= false;
 
   @override
   void initState() {
@@ -176,15 +178,15 @@ class _DraftsState extends State<Drafts> {
                       ),
                     ),
                     buttonRow(),
-                    Text("title: ${title}"),
-                    Text("description: ${description}"),
-                    Text("title error: ${_titleError}"),
-                    Text("description error: $_descriptionError"),
-
-                    Text("new questionsss ${dataList.indexed}"),
-
-
-                    Text(" question count ${_questionCount}"),
+                    // Text("title: ${title}"),
+                    // Text("description: ${description}"),
+                    // Text("title error: ${_titleError}"),
+                    // Text("description error: $_descriptionError"),
+                    //
+                    // Text("new questionsss ${dataList.indexed}"),
+                    //
+                    //
+                    // Text(" question count ${_questionCount}"),
 
 
 
@@ -195,10 +197,16 @@ class _DraftsState extends State<Drafts> {
                           onPressed: ()async{
                             if(title.isNotEmpty && description.isNotEmpty && _titleError == null && _descriptionError == null ){
                               try {
+                                setState(() {
+                                  isloading=true;
+                                });
                                 final response = await FormApi.updateForm(
                                     widget.id, title, description, 10,
                                     Status.Draft);
                                 if(response.isNotEmpty){
+                                  setState(() {
+                                    isloading=false;
+                                  });
                                   Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(builder: (context) => Home()), // Closing parenthesis added here
@@ -210,11 +218,20 @@ class _DraftsState extends State<Drafts> {
 
 
                                 }else{
+                                  setState(() {
+                                    isloading=false;
+                                  });
                                   ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(content: Text(
                                           'Form has not been updated '),));
                                 }
                               }catch(e){
+                                setState(() {
+                                  isloading=false;
+                                });
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text(
+                                        'There seems to be a problem.Please try later. '),));
                                 print(e);
                               }
                             }else{
@@ -230,7 +247,12 @@ class _DraftsState extends State<Drafts> {
                               }
                             }
                           },
-                          child: const Text('Update as draft'),
+                          child: isloading
+                              ? const CircularProgressIndicator(
+                            strokeWidth: 2,  // Adjust the thickness of the indicator
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ) // Show loading indicator if _isLoading is true
+                              : const Text('Update as Draft'),
                         ),
                         const SizedBox(width:20),
                         ElevatedButton(
@@ -250,11 +272,17 @@ class _DraftsState extends State<Drafts> {
                                     TextButton(
                                       onPressed: () async{
                                         try {
+                                          setState(() {
+                                            loading = false;
+                                          });
                                           final response = await FormApi.updateForm(
                                               widget.id, title, description, int.parse(usageLimitController.text),
                                               Status.Posted);
                                           if(response.isNotEmpty){
                                             Navigator.of(context).pop();
+                                            setState(() {
+                                              loading = false;
+                                            });
                                             ScaffoldMessenger.of(context).showSnackBar(
                                                 const SnackBar(content: Text(
                                                     'Form has been updated '),));
@@ -265,6 +293,9 @@ class _DraftsState extends State<Drafts> {
 
                                           }else{
                                             Navigator.of(context).pop();
+                                            setState(() {
+                                              loading = false;
+                                            });
                                             ScaffoldMessenger.of(context).showSnackBar(
                                                 const SnackBar(content: Text(
                                                     'Form has not been updated '),));
@@ -290,7 +321,12 @@ class _DraftsState extends State<Drafts> {
                              
 
                           },
-                          child: const Text('Post as Job'),
+                          child: loading
+                              ? const CircularProgressIndicator(
+                            strokeWidth: 2,  // Adjust the thickness of the indicator
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ) // Show loading indicator if _isLoading is true
+                              : const Text('Post as Job'),
                         ),
                         SizedBox(height:50)
                       ],

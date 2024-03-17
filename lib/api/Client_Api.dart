@@ -115,8 +115,46 @@ try{
       throw Exception('Failed to Update form');
     }
 
+  }
 
+  static Future<Map<String, dynamic>> fetchBalance() async {
+    final token=html.window.localStorage['auth_token'];
+    final balanceUrl = Uri.parse('$url/api/core/client/check/wallet');
+    try {
+      final response = await http.get(balanceUrl,headers: {'Authorization': 'Bearer $token',
+      }, );
 
+      if (response.statusCode == 200) {
+        print("helooo ${json.decode(response.body)}");
+        return json.decode(response.body);
+      } else {
+        print(response.statusCode);
+        throw Exception('Failed to load balance');
+      }
+    } catch (e) {
+      throw Exception('Failed to load balance. $e');
+    }
+  }
+
+  static Future<dynamic> addMoneyToWallet(num amount) async {
+    final token=html.window.localStorage['auth_token'];
+    final balanceUrl = Uri.parse('$url/api/core/client/check/wallet/add-money?amount=$amount');
+
+    try {
+      final response = await http.post(
+        balanceUrl,
+        headers: {'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        throw Exception('Failed to add money to wallet');
+      }
+    } catch (e) {
+      throw Exception('Failed to add money to wallet $e');
+    }
   }
 
 }

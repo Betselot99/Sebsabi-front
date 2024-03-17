@@ -124,6 +124,27 @@ class _FormsCardState extends State<FormsCard> {
                           ))),]
                       ),
                       const SizedBox(height:10),
+                      Row(
+                        children: [
+                          Text("Payment pending...",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
+                            color:  Colors.red,
+                            fontSize: 12,
+                          ))),
+                        ],
+                      ),
+                    ]else if(widget.formStatus == "Paid")...[
+                      Text("Title: ${widget.title}",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
+                        color:  Colors.grey,
+                        fontSize: 20,
+                      ))),
+                      Wrap(
+                          children: [Text("Description: ${widget.description}", maxLines: 5,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
+                            color:  Color(0XFFC8C8C8),
+                            fontSize: 12,
+
+                          ))),]
+                      ),
+                      const SizedBox(height:10),
                       Text("Completed: See Results",maxLines: 2,overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins(textStyle: const TextStyle(
                         color:  Colors.green,
                         fontSize: 12,
