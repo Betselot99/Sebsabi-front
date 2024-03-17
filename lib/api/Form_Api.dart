@@ -264,6 +264,29 @@ class FormApi{
     }
   }
 
+
+  static Future<Map<String, dynamic>> pay(int formId) async {
+    final token=html.window.localStorage['auth_token'];
+    final analysisUrl = Uri.parse('$url/api/core/client/pay?formId=$formId');
+
+
+    try {
+      final response = await http.post(analysisUrl,headers: {
+        'Authorization': 'Bearer $token'
+      },);
+      if (response.statusCode == 200) {
+        // API call successful, parse the response and return the data
+        return json.decode(response.body);
+      } else {
+        // Handle other status codes or errors
+        throw Exception('Failed to pay');
+      }
+    } catch (e) {
+      // Handle network or other exceptions
+      throw Exception('Failed pay. Check your network connection.$e');
+    }
+  }
+
   static Future<String> giveTestimonialForGigWorker(int formId, int gigWorkerId, String testimonial) async {
     final token=html.window.localStorage['auth_token'];
     final testimonialUrl = Uri.parse('$url/api/core/client/view/forms/completed/giveTestimonials?formId=$formId&gigWorkerId=$gigWorkerId');

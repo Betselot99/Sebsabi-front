@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sebsabi/api/Client_Api.dart';
 
@@ -18,10 +19,21 @@ class _ProfileState extends State<Profile> {
   TextEditingController occupationController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   late Future<num> balance;
+  TextEditingController _textController = TextEditingController();
   @override
   void initState() {
     super.initState();
     checkForProfile();
+    balance = _fetchBalance();
+  }
+
+  Future<num> _fetchBalance() async {
+    try {
+      Map<String, dynamic> data = await ClientApi.fetchBalance();
+      return data['amount'];
+    } catch (e) {
+      throw Exception('Error fetching balance $e');
+    }
   }
   late Future<Map<String, dynamic>> forms;
   late bool formAvailable= false;
@@ -38,9 +50,9 @@ class _ProfileState extends State<Profile> {
       fnameController.text=formsList['firstName'];
       lnameController.text =formsList['lastName'];
       emailController.text=formsList['email'];
-      companyNameController.text=formsList['companyName'];
-      companyTypeController.text=formsList['companyType'];
-      occupationController.text=formsList['occupation'];
+      companyNameController.text=formsList['companyName']??"";
+      companyTypeController.text=formsList['companyType']??"";
+      occupationController.text=formsList['occupation']??"";
     });
 
   }
@@ -349,6 +361,70 @@ class _ProfileState extends State<Profile> {
           fontSize: 13,
         ))),
         SizedBox(height: 50),
+        buildCard("Balance", balance),
+        Padding(
+          padding: const EdgeInsets.only(right:20, left:20),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.green, // Change button color here
+              onPrimary: Colors.white, // Change text color here
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Change padding here
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0), // Change border radius here
+              ),
+            ),
+            onPressed: () {
+
+              showDialog<void>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: Text('Enter amount'),
+                    content: TextField(
+                      controller: _textController,
+                      decoration: InputDecoration(hintText: 'Enter a number'),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: Text('Cancel'),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: Text('OK'),
+                        onPressed: () async {
+
+                          // try {
+                          //   String enteredText = _textController.text;
+                          //   num? amount = num.tryParse(enteredText);
+                          //   dynamic response = await ClientApi.addMoneyToWallet(amount!);
+                          //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          //     content: Text('Money added to wallet'),));
+                          // } catch (e) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          //     content: Text('There seems to be a problem,Please try again.'),));
+                          // }
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0), // Change dialog border radius here
+                    ),
+                  );
+                },
+              );
+
+            },
+            child: Text('Add money to Wallet'),
+          ),
+        ),
+        SizedBox(height: 50),
       ],
     );
   }
@@ -358,19 +434,33 @@ class _ProfileState extends State<Profile> {
       surfaceTintColor: Colors.white,
       color: Colors.white,
       elevation: 5.0,
-
       margin: EdgeInsets.all(16.0),
       child: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-                title,
-                style: GoogleFonts.poppins(textStyle: const TextStyle(
-                  color:  Color(0XFFC8C8C8),
-                  fontSize: 15,
-                ),)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                    title,
+                    style: GoogleFonts.poppins(textStyle: const TextStyle(
+                      color:  Color(0XFFC8C8C8),
+                      fontSize: 15,
+                    ),)),
+                IconButton(
+                  icon: Icon(Icons.refresh),
+                  onPressed: () async {
+                    // Perform the data reloading here
+                    setState(() {
+                      balance = _fetchBalance();
+                    });
+                  },
+                  color: Color(0XFFC8C8C8),
+                ),
+              ],
+            ),
             SizedBox(height: 8.0),
             FutureBuilder<num>(
               future: data,
@@ -381,7 +471,7 @@ class _ProfileState extends State<Profile> {
                   return Text("Error: ${snapshot.error}");
                 } else {
                   return Text(
-                    title=='Balance'?"${snapshot.data} ETB":"${snapshot.data}",
+                    title == 'Balance' ? "${snapshot.data} ETB" : "${snapshot.data}",
                     style: GoogleFonts.poppins(textStyle: const TextStyle(
                       color:   Color(0XFF909300),
                       fontSize: 18,
@@ -395,4 +485,5 @@ class _ProfileState extends State<Profile> {
       ),
     );
   }
+
 }
