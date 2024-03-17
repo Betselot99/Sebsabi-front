@@ -251,7 +251,7 @@ class _AdminHomeState extends State<AdminHome> {
                 ),
                 header: SideNavigationBarHeader(
                   image: const CircleAvatar(
-                    backgroundImage: AssetImage("logo.png"),
+                    backgroundImage: AssetImage("assets/logo.png"),
                     backgroundColor: Colors.white,
                   ),
                   title: Text("Sebsabi",
