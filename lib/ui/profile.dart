@@ -17,6 +17,7 @@ class _ProfileState extends State<Profile> {
   TextEditingController companyTypeController = TextEditingController();
   TextEditingController occupationController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  late Future<num> balance;
   @override
   void initState() {
     super.initState();
@@ -25,6 +26,8 @@ class _ProfileState extends State<Profile> {
   late Future<Map<String, dynamic>> forms;
   late bool formAvailable= false;
   late Map<String,dynamic> formsList;
+
+
 
 
   Future<void> checkForProfile() async {
@@ -347,6 +350,49 @@ class _ProfileState extends State<Profile> {
         ))),
         SizedBox(height: 50),
       ],
+    );
+  }
+  Widget buildCard(String title, Future<num> data) {
+    return Card(
+      clipBehavior: Clip.hardEdge,
+      surfaceTintColor: Colors.white,
+      color: Colors.white,
+      elevation: 5.0,
+
+      margin: EdgeInsets.all(16.0),
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+                title,
+                style: GoogleFonts.poppins(textStyle: const TextStyle(
+                  color:  Color(0XFFC8C8C8),
+                  fontSize: 15,
+                ),)),
+            SizedBox(height: 8.0),
+            FutureBuilder<num>(
+              future: data,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text("Error: ${snapshot.error}");
+                } else {
+                  return Text(
+                    title=='Balance'?"${snapshot.data} ETB":"${snapshot.data}",
+                    style: GoogleFonts.poppins(textStyle: const TextStyle(
+                      color:   Color(0XFF909300),
+                      fontSize: 18,
+                    ),),
+                  );
+                }
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

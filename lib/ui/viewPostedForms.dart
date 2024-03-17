@@ -158,6 +158,7 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
                         DataColumn(label: Text('First Name')),
                         DataColumn(label: Text('Last Name')),
                         DataColumn(label: Text('View Proposal')),
+                        DataColumn(label: Text('Price')),
                         DataColumn(label: Text('View Profile')),
                         DataColumn(label: Text('Accept')),
 
@@ -191,13 +192,143 @@ class _ViewPostedFormsState extends State<ViewPostedForms> {
                                     },
                                   );
                                 },
+
                                 child: Text('View Proposal'),
                               ),
                             ),
+                            DataCell(Text('${formsList[index]['ratePerForm']}')),
                             DataCell(
                               ElevatedButton(
                                 onPressed: () {
-                                  // Handle view profile button click
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        content: SingleChildScrollView(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              CircleAvatar(
+                                                radius: 30,
+                                                backgroundImage: AssetImage('assets/logo.png'), // Placeholder image
+                                                backgroundColor: Colors.transparent,
+                                              ),
+                                              SizedBox(height: 10),
+                                              Text(
+                                                '${formsList[index]['gigWorker']['firstName']} ${formsList[index]['gigWorker']['lastName']}',
+                                                style: GoogleFonts.poppins(
+                                                  textStyle: const TextStyle(
+                                                    color: Color(0XFF909300),
+                                                    fontSize: 30,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              Text(
+                                                '${formsList[index]['gigWorker']['email']}',
+                                                style: GoogleFonts.poppins(
+                                                  textStyle: const TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              SizedBox(height: 20),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.transparent, // Transparent background
+                                                  borderRadius: BorderRadius.circular(15),
+                                                  border: Border.all(color: Colors.white, width: 1),
+                                                ),
+                                                padding: EdgeInsets.all(10),
+                                                child:
+                                                    Row(
+                                                      children: [
+                                                        CircleAvatar(
+                                                          radius: 14,
+                                                          backgroundColor: Colors.white,
+                                                          child: Icon(
+                                                            Icons.face, // Replace this with your logo icon or image
+                                                            size: 14,
+                                                            color: Color(0XFF909300), // Color of the logo
+                                                          ),
+                                                        ),
+                                                        SizedBox(width:10),
+                                                        Text(
+                                                          'Qualification: ${formsList[index]['gigWorker']['qualification']}',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),),
+                                                    SizedBox(height: 10),
+                                                    Text(
+                                                      'Testimonials',
+                                                      style: TextStyle(
+                                                        fontSize: 18,
+                                                        color: Color(0XFF909300),
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 5),
+                                                    // Iterate over the testimonials and add Text widgets
+                                                    for (var testimonial in formsList[index]['gigWorker']['testimonials'])
+                                                      Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+
+                                                              SizedBox(width: 10),
+                                                              Text(
+                                                                '${testimonial['client']['firstName']} ${testimonial['client']['lastName']}: ',
+                                                                style: GoogleFonts.poppins(
+                                                                  textStyle: TextStyle(
+                                                                    fontSize: 14,
+                                                                    color: Color(0XFF909300),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                child: Text(
+                                                                  testimonial['content'],
+                                                                  style: GoogleFonts.poppins(
+                                                                    textStyle: TextStyle(
+                                                                      fontSize: 14,
+                                                                      color: Colors.black,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Divider(),
+                                                        ],
+                                                      ),
+
+
+
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              // Close the dialog when the button is pressed
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: Text('Close'),
+                                          ),
+                                        ],
+                                      );
+
+
+
+                                    },
+                                  );
                                   print('View Profile $index');
                                 },
                                 child: Text('View Profile'),
