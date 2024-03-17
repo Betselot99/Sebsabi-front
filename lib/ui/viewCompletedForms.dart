@@ -39,7 +39,7 @@ class _ViewCompletedFormState extends State<ViewCompletedForm> {
         child: Column(
             children:[
               const PagesNavBar(),
-              Text("Form Analytics ${widget.gigWorkerId}", style: GoogleFonts.poppins(textStyle: const TextStyle(
+              Text("Form Analytics", style: GoogleFonts.poppins(textStyle: const TextStyle(
                 color: Color(0XFF909300),
                 fontSize: 30,
                 fontWeight: FontWeight.w500,

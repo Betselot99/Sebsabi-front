@@ -79,12 +79,51 @@ class _CompletedFormsState extends State<CompletedForms> {
                   children: List.generate(
                     formsList.length, // Adjust the number of items as needed
                         (index) =>  FormsCard(onTap: (){
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>  ViewCompletedForm(formTitle: formsList[index]['title'], formDescription: formsList[index]['description'], usage: formsList[index]['usageLimit'],questions: formsList[index]['questions'], id: formsList[index]['id'], gigWorkerId: formsList[index]['assignedGigWorker']['id'],),
-                            ),
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Payment Details'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Amount: \$150.0'),
+                                    Text('Commission: \$15.0'),
+                                    Text('Total Amount: \$165.0'),
+                                  ],
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('Cancel'),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Payment has been deducted.'),
+                                        ),
+                                      );
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>  ViewCompletedForm(formTitle: formsList[index]['title'], formDescription: formsList[index]['description'], usage: formsList[index]['usageLimit'],questions: formsList[index]['questions'], id: formsList[index]['id'], gigWorkerId: formsList[index]['assignedGigWorker']['id'],),
+                                        ),
+                                      );
+                                    },
+                                    child: Text('Pay'),
+                                  ),
+                                ],
+                              );
+                            },
                           );
+
+
+
                         }, formStatus:formsList[index]['status'], title: formsList[index]['title'], description: formsList[index]['description'], claimed: false, proposalNo: 0,),
                   ),
                 ),
