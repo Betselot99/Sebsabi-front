@@ -8,8 +8,7 @@ import 'package:sebsabi/ui/landing.dart';
 import 'package:sebsabi/ui/myforms.dart';
 import 'package:sebsabi/ui/postedforms.dart';
 import 'package:sebsabi/ui/profile.dart';
-import 'package:sebsabi/ui/widgets/notification.dart';
-import 'package:sebsabi/ui/widgets/notification_drawer.dart';
+
 import 'package:side_navigation/side_navigation.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -130,10 +129,7 @@ class _AdminHomeState extends State<AdminHome> {
                 ))),
           ),
             const SizedBox(width: 20),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: MyNotification(),
-            ),
+
           ]
       ),
       drawer: Drawer(
@@ -198,7 +194,7 @@ class _AdminHomeState extends State<AdminHome> {
   Widget DesktopHome(context, w, h) {
     return Scaffold(
       backgroundColor: const Color(0XFFFAFBFF),
-      endDrawer: NotificationDrawer(),
+
       drawerScrimColor: Colors.transparent,
       endDrawerEnableOpenDragGesture: false,
       body: Stack(
@@ -220,7 +216,7 @@ class _AdminHomeState extends State<AdminHome> {
 
                         ))),
                   ),
-                  MyNotification(),
+
                 ],
               )),
           Row(
