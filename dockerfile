@@ -6,7 +6,7 @@ RUN git clone https://github.com/flutter/flutter.git -b stable --depth 1 /opt/fl
 ENV PATH="/opt/flutter/bin:${PATH}"
 
 # Install Git
-# RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y git
 
 # Copy the Flutter project files
 WORKDIR /app
