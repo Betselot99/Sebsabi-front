@@ -2,7 +2,10 @@
 FROM dart:3.1.2-sdk AS builder
 
 # Install Flutter SDK
-RUN git clone https://github.com/flutter/flutter.git -b stable --depth 1 /opt/flutter
+# RUN git clone https://github.com/flutter/flutter.git -b stable --depth 1 /opt/flutter
+RUN git clone -b stable https://github.com/flutter/flutter.git /opt/flutter && \
+    cd /opt/flutter && \
+    git checkout v3.13.4
 ENV PATH="/opt/flutter/bin:${PATH}"
 
 # Install Git
