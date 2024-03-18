@@ -367,7 +367,7 @@ class _ProfileState extends State<Profile> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white, // Change button color here
-              backgroundColor: Colors.white, // Change text color here
+              backgroundColor: Colors.green, // Change text color here
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Change padding here
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0), // Change border radius here
