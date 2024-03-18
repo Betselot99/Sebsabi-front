@@ -1,12 +1,12 @@
 # Stage 1: Build the Flutter web app
-FROM dart:3.2.6-sdk AS builder
+FROM dart:3.1.2-sdk AS builder
 
 # Install Flutter SDK
 RUN git clone https://github.com/flutter/flutter.git -b stable --depth 1 /opt/flutter
 ENV PATH="/opt/flutter/bin:${PATH}"
 
 # Install Git
-# RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y git
 
 # Copy the Flutter project files
 WORKDIR /app
