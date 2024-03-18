@@ -366,8 +366,8 @@ class _ProfileState extends State<Profile> {
           padding: const EdgeInsets.only(right:20, left:20),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              primary: Colors.green, // Change button color here
-              onPrimary: Colors.white, // Change text color here
+              foregroundColor: Colors.white, // Change button color here
+              backgroundColor: Colors.white, // Change text color here
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8), // Change padding here
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0), // Change border radius here
